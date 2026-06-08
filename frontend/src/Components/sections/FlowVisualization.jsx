@@ -1,0 +1,38 @@
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { flowSteps } from '../../config/homeContent.js';
+
+export default function FlowVisualization() {
+  return (
+    <section id="flow" className="site-section flow-section" aria-labelledby="flow-title">
+      <div className="section-kicker">Workflow visualization</div>
+      <div className="section-heading-row">
+        <h3 id="flow-title">From a thought to a finished reminder.</h3>
+        <p>
+          A small visual system for the website: it explains how Remindly turns scattered
+          intentions into clear next actions.
+        </p>
+      </div>
+
+      <div className="flow-visual">
+        <div className="flow-line" aria-hidden="true" />
+        {flowSteps.map((step, index) => (
+          <article key={step.title} className="flow-step" style={{ '--step-index': index }}>
+            <div className="flow-index">
+              {index === flowSteps.length - 1 ? (
+                <CheckCircle2 size={21} strokeWidth={2.3} />
+              ) : (
+                <span>{index + 1}</span>
+              )}
+            </div>
+            <span className="flow-meta">{step.meta}</span>
+            <h4>{step.title}</h4>
+            <p>{step.body}</p>
+            {index < flowSteps.length - 1 ? (
+              <ArrowRight className="flow-arrow" size={20} strokeWidth={2.1} aria-hidden="true" />
+            ) : null}
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
