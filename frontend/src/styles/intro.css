@@ -34,7 +34,7 @@
   inset: 0;
   z-index: 8;
   pointer-events: none;
-  animation: introLoaderExit 1200ms cubic-bezier(0.22, 1, 0.36, 1) 4300ms both;
+  animation: introLoaderExit 760ms cubic-bezier(0.22, 1, 0.36, 1) 2350ms both;
 }
 
 .intro-core {
@@ -141,7 +141,7 @@
   place-items: center;
   transform: translate(-50%, -50%) scale(var(--bell-dock-scale));
   transform-origin: center;
-  animation: bellDock 3300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: bellDock 2050ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .bell-stage::before {
@@ -151,7 +151,7 @@
   border-radius: 50%;
   background: radial-gradient(circle, rgb(48 117 224 / 0.32), transparent 64%);
   filter: blur(10px);
-  animation: corePulse 3300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: corePulse 2050ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .bell-button {
@@ -171,8 +171,8 @@
     0 0 90px rgb(48 117 224 / 0.52);
   animation:
     bellButtonEnter 780ms cubic-bezier(0.22, 1, 0.36, 1) both,
-    bellButtonRing 1180ms cubic-bezier(0.32, 0.72, 0, 1) 720ms forwards,
-    bellDockTremble 820ms cubic-bezier(0.2, 0.8, 0.2, 1) 3180ms forwards;
+    bellButtonRing 1020ms cubic-bezier(0.32, 0.72, 0, 1) 520ms forwards,
+    bellDockTremble 760ms cubic-bezier(0.2, 0.8, 0.2, 1) 1880ms forwards;
 }
 
 .bell-icon {
@@ -199,7 +199,7 @@
   border-radius: 50%;
   border: 1px solid rgb(127 176 255 / 0.36);
   opacity: 0;
-  animation: orbitGlide 2800ms cubic-bezier(0.22, 1, 0.36, 1) 120ms both;
+  animation: orbitGlide 1750ms cubic-bezier(0.22, 1, 0.36, 1) 80ms both;
 }
 
 .bell-orbit-one {
@@ -224,7 +224,7 @@
   border: 1px solid rgb(127 176 255 / 0.34);
   border-radius: 50%;
   opacity: 0;
-  animation: sidePing 1200ms cubic-bezier(0.22, 1, 0.36, 1) 860ms both;
+  animation: sidePing 1040ms cubic-bezier(0.22, 1, 0.36, 1) 600ms both;
 }
 
 .bell-ping-left {
@@ -233,7 +233,7 @@
 
 .bell-ping-right {
   right: 4%;
-  animation-delay: 980ms;
+  animation-delay: 720ms;
 }
 
 .reminder-wordmark {
@@ -248,6 +248,9 @@
   letter-spacing: 0;
   line-height: 0.86;
   white-space: nowrap;
+  text-shadow:
+    0 18px 80px rgb(48 117 224 / 0.3),
+    0 2px 18px rgb(255 255 255 / 0.08);
 }
 
 .wordmark-letter {
@@ -256,7 +259,7 @@
   filter: blur(18px);
   transform: translateY(0.24em) scale(0.96);
   animation: letterReveal 860ms cubic-bezier(0.2, 0.9, 0.18, 1) both;
-  animation-delay: calc(1740ms + var(--letter-index) * 58ms);
+  animation-delay: calc(760ms + var(--letter-index) * 42ms);
 }
 
 .wordmark-i {
@@ -283,7 +286,7 @@
   transform: translateY(0.18em) scaleY(0.86);
   transform-origin: bottom;
   animation: iStemReveal 820ms cubic-bezier(0.2, 0.9, 0.18, 1) both;
-  animation-delay: calc(1740ms + var(--letter-index) * 58ms);
+  animation-delay: calc(760ms + var(--letter-index) * 42ms);
 }
 
 .logo-bell {
