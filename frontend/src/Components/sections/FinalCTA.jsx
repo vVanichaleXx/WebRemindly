@@ -1,18 +1,18 @@
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export default function FinalCTA() {
   return (
-    <section className="site-section final-cta" aria-label="Join Remindly beta">
+    <section className="site-section final-cta" aria-label="Get early access to Remindly">
       <div>
-        <span><Sparkles size={16} strokeWidth={2.1} /> Next step</span>
-        <h3>Make the landing page feel as calm as the app.</h3>
+        <span><CheckCircle2 size={16} strokeWidth={2.1} /> Next step</span>
+        <h3>Start with a calmer day.</h3>
         <p>
-          The structure is ready for App Store links, TestFlight signup, screenshots, privacy
-          pages, and a real changelog when you want to ship it publicly.
+          Remindly brings reminders, habits, plans, and events into one focused iPhone workspace
+          for daily organization.
         </p>
       </div>
       <a href="mailto:hello@remindly.app">
-        Join beta <ArrowRight size={18} strokeWidth={2.2} />
+        Get early access <ArrowRight size={18} strokeWidth={2.2} />
       </a>
     </section>
   );

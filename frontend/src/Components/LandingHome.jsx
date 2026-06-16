@@ -5,6 +5,7 @@ import FeatureGrid from './sections/FeatureGrid.jsx';
 import FinalCTA from './sections/FinalCTA.jsx';
 import FlowVisualization from './sections/FlowVisualization.jsx';
 import ThemeShowcase from './sections/ThemeShowcase.jsx';
+import Footer from './layout/Footer.jsx';
 import MarketingHeader from './MarketingHeader.jsx';
 import PhonePreview from './PhonePreview.jsx';
 
@@ -22,10 +23,10 @@ export default function LandingHome() {
           <p>{heroCopy.body}</p>
           <div className="hero-actions" aria-label="Primary actions">
             <a href="#preview" className="hero-button hero-button-primary">
-              Preview app
+              Explore Remindly
             </a>
-            <a href="mailto:hello@remindly.app" className="hero-button hero-button-secondary">
-              Contact
+            <a href="#flow" className="hero-button hero-button-secondary">
+              See how it works
             </a>
           </div>
         </div>
@@ -38,6 +39,7 @@ export default function LandingHome() {
       <ThemeShowcase activeTheme={activeTheme} onThemeChange={setActiveTheme} />
       <ArticleSection />
       <FinalCTA />
+      <Footer />
     </section>
   );
 }

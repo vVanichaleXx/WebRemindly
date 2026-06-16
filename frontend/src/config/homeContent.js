@@ -1,83 +1,82 @@
 export const navItems = [
   { label: 'Overview', href: '#overview' },
   { label: 'Flow', href: '#flow' },
-  { label: 'Themes', href: '#themes' },
-  { label: 'Journal', href: '#journal' },
+  { label: 'Interface', href: '#themes' },
+  { label: 'Thinking', href: '#journal' },
 ];
 
 export const heroCopy = {
   eyebrow: 'Remindly for iOS',
   title: 'A calmer way to keep your day in motion.',
-  body: 'Tasks, habits, events, and plans live together in one soft timeline, so every reminder feels easy to catch before it slips away.',
+  body: 'Reminders, tasks, habits, plans, and scheduled events share one quiet home, so your next decision is visible without making the day feel heavier.',
 };
 
 export const themeOptions = [
   {
     id: 'dark',
     label: 'Dark',
-    description: 'A deep focus mode built around the Remindly blue glow.',
+    description: 'A composed focus surface for evenings, travel, and low-light planning.',
   },
   {
     id: 'light',
     label: 'Light',
-    description: 'Soft iOS surfaces for an everyday planning dashboard.',
+    description: 'Soft iOS surfaces for everyday planning, quick review, and calm task entry.',
   },
   {
     id: 'white',
     label: 'White',
-    description: 'A crisp editorial mode for app-store pages and press.',
+    description: 'A crisp neutral mode for screenshots, sharing, and clear daily review.',
   },
 ];
 
 export const categories = [
-  { name: 'All', count: 14, icon: '▦', color: '#3075e0' },
-  { name: 'Work', count: 6, icon: '▣', color: '#3075e0' },
-  { name: 'Life', count: 4, icon: '♥', color: '#45ba87' },
-  { name: 'Sport', count: 2, icon: '↗', color: '#e36b1f' },
-  { name: 'Plans', count: 3, icon: '◷', color: '#8559d6' },
+  { name: 'Tasks', count: 5, color: '#3075e0' },
+  { name: 'Habits', count: 3, color: '#45ba87' },
+  { name: 'Plans', count: 2, color: '#8559d6' },
+  { name: 'Events', count: 1, color: '#e36b1f' },
 ];
 
 export const reminders = [
   {
-    title: 'Sprint security',
-    description: 'Review open vulnerabilities via snyk',
+    title: 'Review project plan',
+    description: 'Confirm next steps before lunch',
     time: '9:15',
     repeat: 'once',
-    category: 'Work',
+    category: 'Plan',
     priority: 'High',
     pinned: true,
     color: '#3075e0',
-    icon: '▣',
+    type: 'Task',
   },
   {
-    title: 'Team standup meeting',
-    description: 'Daily sync with the dev team',
-    time: '9:00',
+    title: 'Morning habit',
+    description: 'Water, stretch, review priorities',
+    time: '10:00',
     repeat: 'daily',
-    category: 'Work',
-    priority: 'High',
-    color: '#3075e0',
-    icon: '▣',
+    category: 'Habits',
+    priority: 'Medium',
+    color: '#45ba87',
+    type: 'Habit',
   },
   {
-    title: 'Evening run',
-    description: '5km in the park',
-    time: '18:30',
-    repeat: 'daily',
-    category: 'Sport',
+    title: 'Design review',
+    description: 'Prepare notes and questions',
+    time: '14:30',
+    repeat: 'once',
+    category: 'Events',
     priority: 'Medium',
     color: '#e36b1f',
-    icon: '↗',
+    type: 'Event',
   },
   {
-    title: 'Call mom',
-    description: 'Weekly check-in',
-    time: '19:00',
+    title: 'Weekly reset',
+    description: 'Clear inbox and schedule plans',
+    time: '18:00',
     repeat: 'weekly',
-    category: 'Life',
+    category: 'Plans',
     priority: 'Low',
-    color: '#45ba87',
-    icon: '♥',
+    color: '#8559d6',
+    type: 'Plan',
   },
 ];
 
@@ -85,24 +84,24 @@ export const tabItems = ['home', 'calendar', 'add', 'stats', 'settings'];
 
 export const featureCards = [
   {
-    title: 'Everything starts in one timeline',
-    body: 'Reminders, habits, plans, and timed events sit together so you can scan the day instead of opening four places.',
-    stat: '5',
-    statLabel: 'views in one rhythm',
+    title: 'One calm overview',
+    body: 'Reminders, habits, plans, and timed events sit together so the day can be understood at a glance.',
+    stat: '1',
+    statLabel: 'daily home',
     tone: 'blue',
   },
   {
-    title: 'Categories stay visual',
-    body: 'Work, Life, Sport, Health, and Plans keep their own colors, counts, and quick filters from the iOS app.',
-    stat: '7',
-    statLabel: 'built-in categories',
+    title: 'Structure without friction',
+    body: 'Tasks can carry category, priority, repeat rhythm, and time while the interface still feels light enough for quick capture.',
+    stat: '4',
+    statLabel: 'core item types',
     tone: 'green',
   },
   {
-    title: 'Notifications feel controlled',
-    body: 'Pinned reminders, repeat routines, and recent notifications are available without making the interface loud.',
-    stat: '12',
-    statLabel: 'recent alerts',
+    title: 'Notifications stay intentional',
+    body: 'Pinned reminders, recurring habits, and scheduled events are visible in context instead of becoming a noisy stream.',
+    stat: '0',
+    statLabel: 'extra noise',
     tone: 'purple',
   },
 ];
@@ -110,7 +109,7 @@ export const featureCards = [
 export const flowSteps = [
   {
     title: 'Capture',
-    body: 'Add a task, habit, plan, or event as soon as it appears.',
+    body: 'Add a reminder, task, habit, plan, or event as soon as it appears.',
     meta: 'Quick entry',
   },
   {
@@ -120,7 +119,7 @@ export const flowSteps = [
   },
   {
     title: 'Surface',
-    body: 'Today’s Overview brings the next relevant item into view.',
+    body: "Today's overview brings the next relevant item into view.",
     meta: 'Home timeline',
   },
   {
@@ -128,14 +127,6 @@ export const flowSteps = [
     body: 'Complete, pin, archive, or revisit with a lightweight action menu.',
     meta: 'Calm closure',
   },
-];
-
-export const palette = [
-  { name: 'Accent Blue', value: '#3075e0', usage: 'Primary actions and notification bell' },
-  { name: 'Life Green', value: '#45ba87', usage: 'Personal and recurring life reminders' },
-  { name: 'Sport Orange', value: '#e36b1f', usage: 'Movement, urgency, and warm highlights' },
-  { name: 'Plans Violet', value: '#8559d6', usage: 'Goals, roadmaps, and long-term plans' },
-  { name: 'Soft Surface', value: '#f7faff', usage: 'Cards, app screens, and quiet panels' },
 ];
 
 export const articles = [
@@ -147,8 +138,8 @@ export const articles = [
   },
   {
     tag: 'Design notes',
-    title: 'Color as a memory system',
-    body: 'The category colors are not decoration. They let Work, Life, Sport, Health, and Plans become recognizable before the user reads a word.',
+    title: 'Light and dark without changing the product',
+    body: 'The app can shift from bright planning to quiet evening review while preserving the same hierarchy, controls, and sense of place.',
     readTime: '4 min',
   },
   {

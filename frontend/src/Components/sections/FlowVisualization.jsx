@@ -4,12 +4,12 @@ import { flowSteps } from '../../config/homeContent.js';
 export default function FlowVisualization() {
   return (
     <section id="flow" className="site-section flow-section" aria-labelledby="flow-title">
-      <div className="section-kicker">Workflow visualization</div>
+      <div className="section-kicker">Everyday flow</div>
       <div className="section-heading-row">
         <h3 id="flow-title">From a thought to a finished reminder.</h3>
         <p>
-          A small visual system for the website: it explains how Remindly turns scattered
-          intentions into clear next actions.
+          Remindly gives loose intentions a place to land, then brings them back when they are
+          useful.
         </p>
       </div>
 

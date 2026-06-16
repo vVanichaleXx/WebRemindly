@@ -1,17 +1,17 @@
-import { BellRing, Layers3, Palette } from 'lucide-react';
+import { BellRing, Layers3, ListChecks } from 'lucide-react';
 import { featureCards } from '../../config/homeContent.js';
 
-const icons = [Layers3, Palette, BellRing];
+const icons = [Layers3, ListChecks, BellRing];
 
 export default function FeatureGrid() {
   return (
     <section className="site-section feature-section" aria-labelledby="features-title">
-      <div className="section-kicker">Built around your HomeView</div>
+      <div className="section-kicker">Daily overview</div>
       <div className="section-heading-row">
         <h3 id="features-title">Everything important, arranged quietly.</h3>
         <p>
-          The website mirrors the app idea: categories, timeline, notifications, and progress
-          are visible without turning the screen into a control panel.
+          Remindly is designed for review, not overload. The important parts of the day stay
+          visible, ordered, and easy to act on.
         </p>
       </div>
 

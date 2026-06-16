@@ -1,10 +1,10 @@
-import { Moon, Sparkles, Sun } from 'lucide-react';
+import { Circle, Moon, SunMedium } from 'lucide-react';
 import { themeOptions } from '../config/homeContent.js';
 
 const icons = {
   dark: Moon,
-  light: Sparkles,
-  white: Sun,
+  light: SunMedium,
+  white: Circle,
 };
 
 export default function ThemeSwitch({ activeTheme, onThemeChange, compact = false }) {

@@ -5,7 +5,6 @@ export default function MarketingHeader({ activeTheme, onThemeChange }) {
   return (
     <header className="marketing-header">
       <a href="/" className="header-brand" aria-label="Remindly home">
-        <span className="brand-mark" aria-hidden="true">⌁</span>
         <span>Remindly</span>
       </a>
 
@@ -20,7 +19,7 @@ export default function MarketingHeader({ activeTheme, onThemeChange }) {
       <div className="header-actions">
         <ThemeSwitch activeTheme={activeTheme} onThemeChange={onThemeChange} compact />
         <a href="mailto:hello@remindly.app" className="header-cta">
-          Join beta
+          Get early access
         </a>
       </div>
     </header>

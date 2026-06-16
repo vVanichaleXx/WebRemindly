@@ -4,7 +4,7 @@ import { articles } from '../../config/homeContent.js';
 export default function ArticleSection() {
   return (
     <section id="journal" className="site-section article-section" aria-labelledby="journal-title">
-      <div className="section-kicker">Mini articles</div>
+      <div className="section-kicker">Product thinking</div>
       <div className="section-heading-row">
         <h3 id="journal-title">Short notes about the product philosophy.</h3>
         <p>

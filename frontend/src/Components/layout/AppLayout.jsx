@@ -1,16 +1,12 @@
-import IntroScene from '../IntroScene.jsx';
-import Footer from './Footer.jsx';
-import Header from './Header.jsx';
+import LandingHome from '../LandingHome.jsx';
 import PageMain from './PageMain.jsx';
 
 export default function AppLayout() {
   return (
     <div className="app-layout">
-      <Header />
       <PageMain>
-        <IntroScene />
+        <LandingHome />
       </PageMain>
-      <Footer />
     </div>
   );
 }
