@@ -1,39 +1,28 @@
-export const navItems = [
+export const productNavItems = [
   { label: 'Overview', href: '#overview' },
+  { label: 'Features', href: '#features' },
   { label: 'Flow', href: '#flow' },
-  { label: 'Interface', href: '#themes' },
-  { label: 'Thinking', href: '#journal' },
+  { label: 'Philosophy', href: '#journal' },
+  { label: 'Final CTA / Start', href: '#cta' },
+];
+
+export const navItems = [
+  { label: 'Roadmap', href: '/roadmap', route: 'roadmap' },
+  { label: 'Pricing', href: '/pricing', route: 'pricing' },
+  { label: 'Tutorial', href: '/tutorial', route: 'tutorial' },
 ];
 
 export const heroCopy = {
-  eyebrow: 'Remindly for iOS',
-  title: 'A calmer way to keep your day in motion.',
-  body: 'Reminders, tasks, habits, plans, and scheduled events share one quiet home, so your next decision is visible without making the day feel heavier.',
+  eyebrow: 'Remindly for iPhone',
+  title: 'Less Noise.\nMore Direction.\nEvery Day.',
+  body: 'A focused home for reminders, habits, plans, and events — designed to help your day feel clear before it begins.',
 };
 
-export const themeOptions = [
-  {
-    id: 'dark',
-    label: 'Dark',
-    description: 'A composed focus surface for evenings, travel, and low-light planning.',
-  },
-  {
-    id: 'light',
-    label: 'Light',
-    description: 'Soft iOS surfaces for everyday planning, quick review, and calm task entry.',
-  },
-  {
-    id: 'white',
-    label: 'White',
-    description: 'A crisp neutral mode for screenshots, sharing, and clear daily review.',
-  },
-];
-
 export const categories = [
-  { name: 'Tasks', count: 5, color: '#3075e0' },
-  { name: 'Habits', count: 3, color: '#45ba87' },
-  { name: 'Plans', count: 2, color: '#8559d6' },
-  { name: 'Events', count: 1, color: '#e36b1f' },
+  { name: 'All', count: 14, color: '#3075e0', icon: 'layers' },
+  { name: 'Work', count: 6, color: '#3075e0', icon: 'briefcase' },
+  { name: 'Life', count: 4, color: '#45ba87', icon: 'heart' },
+  { name: 'Plans', count: 3, color: '#8559d6', icon: 'flag' },
 ];
 
 export const reminders = [
@@ -85,21 +74,21 @@ export const tabItems = ['home', 'calendar', 'add', 'stats', 'settings'];
 export const featureCards = [
   {
     title: 'One calm overview',
-    body: 'Reminders, habits, plans, and timed events sit together so the day can be understood at a glance.',
+    body: 'Reminders, habits, plans, and timed events sit together in a single home view built for fast daily review.',
     stat: '1',
     statLabel: 'daily home',
     tone: 'blue',
   },
   {
     title: 'Structure without friction',
-    body: 'Tasks can carry category, priority, repeat rhythm, and time while the interface still feels light enough for quick capture.',
+    body: 'Category, priority, repeat rhythm, and time stay close to the task without turning capture into administration.',
     stat: '4',
     statLabel: 'core item types',
     tone: 'green',
   },
   {
     title: 'Notifications stay intentional',
-    body: 'Pinned reminders, recurring habits, and scheduled events are visible in context instead of becoming a noisy stream.',
+    body: 'Pinned reminders, recurring habits, and scheduled events stay visible in context instead of becoming a noisy stream.',
     stat: '0',
     statLabel: 'extra noise',
     tone: 'purple',
@@ -129,6 +118,62 @@ export const flowSteps = [
   },
 ];
 
+export const roadmapItems = [
+  {
+    phase: '01',
+    title: 'Service integrations',
+    body: 'Calendar and productivity integrations will bring external reminders, events, and service APIs into the same calm daily view.',
+    meta: 'Calendar sync',
+  },
+  {
+    phase: '02',
+    title: 'AI productivity features',
+    body: 'Voice notes, rough text, and quick ideas can become structured reminders, tasks, plans, and notes with less manual setup.',
+    meta: 'Assisted capture',
+  },
+  {
+    phase: '03',
+    title: 'Personalized habits',
+    body: 'Habit suggestions and routines will adapt over time, using behavior to reduce configuration and keep routines realistic.',
+    meta: 'Adaptive routines',
+  },
+  {
+    phase: '04',
+    title: 'Smarter daily planning',
+    body: 'Priority suggestions and day-structure recommendations will help surface what matters next without adding noise.',
+    meta: 'Calm planning',
+  },
+];
+
+export const tutorialSteps = [
+  {
+    title: 'Capture an idea',
+    body: 'Start with a quick thought, task, habit, plan, or scheduled event the moment it appears.',
+  },
+  {
+    title: 'Shape it clearly',
+    body: 'Add time, repeat rhythm, category, priority, or context so Remindly knows where it belongs.',
+  },
+  {
+    title: 'Follow the day',
+    body: 'Use the Home overview to see the active moment, top priority, and the next few items without noise.',
+  },
+];
+
+export const pricingCopy = {
+  plan: 'Free',
+  price: '$0/month',
+  body: 'Remindly is currently free while the product is being shaped into a calm, reliable iPhone productivity system.',
+  bullets: [
+    'Reminders, tasks, habits, plans, and events',
+    'Calm daily overview',
+    'Manual organization',
+    'Local-first product experience',
+    'Regular product updates',
+    'Early access to new features',
+  ],
+};
+
 export const articles = [
   {
     tag: 'Product thinking',
@@ -138,8 +183,8 @@ export const articles = [
   },
   {
     tag: 'Design notes',
-    title: 'Light and dark without changing the product',
-    body: 'The app can shift from bright planning to quiet evening review while preserving the same hierarchy, controls, and sense of place.',
+    title: 'Designed around the first useful glance',
+    body: 'The interface gives priority to what helps the next decision: the active moment, the top priority, and the few reminders worth seeing now.',
     readTime: '4 min',
   },
   {

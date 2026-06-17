@@ -1,17 +1,17 @@
-import { Circle, Moon, SunMedium } from 'lucide-react';
-import { themeOptions } from '../config/homeContent.js';
+import { Moon } from 'lucide-react';
 
-const icons = {
-  dark: Moon,
-  light: SunMedium,
-  white: Circle,
-};
+const themeOptions = [
+  {
+    id: 'dark',
+    label: 'Dark',
+    description: 'The landing page is presented in Remindly’s dark product mood.',
+  },
+];
 
 export default function ThemeSwitch({ activeTheme, onThemeChange, compact = false }) {
   return (
     <div className={compact ? 'theme-switch theme-switch-compact' : 'theme-switch'} aria-label="Theme switcher">
       {themeOptions.map((theme) => {
-        const Icon = icons[theme.id];
         const isActive = activeTheme === theme.id;
 
         return (
@@ -24,7 +24,7 @@ export default function ThemeSwitch({ activeTheme, onThemeChange, compact = fals
             aria-pressed={isActive}
             title={theme.description}
           >
-            <Icon size={compact ? 15 : 17} strokeWidth={2.2} />
+            <Moon size={compact ? 15 : 17} strokeWidth={2.2} />
             {!compact ? <span>{theme.label}</span> : null}
           </button>
         );

@@ -1,54 +1,92 @@
 import {
+  Bell,
+  BarChart3,
   CalendarDays,
-  ChartNoAxesColumnIncreasing,
   CheckCircle2,
-  Circle,
   Clock3,
   Flag,
+  Flame,
   Home,
   ListChecks,
   Plus,
+  Search,
   Settings,
+  SlidersHorizontal,
   Target,
 } from 'lucide-react';
-import { categories, reminders, tabItems } from '../config/homeContent.js';
 
-const tabIcons = {
-  home: Home,
-  calendar: CalendarDays,
-  add: Plus,
-  stats: ChartNoAxesColumnIncreasing,
-  settings: Settings,
-};
+const filters = ['Tasks', 'Reminders', 'Events', 'Habits', 'Plans'];
 
-const typeIcons = {
-  Task: ListChecks,
-  Habit: Target,
-  Event: CalendarDays,
-  Plan: Flag,
-};
+const reminders = [
+  {
+    title: 'Review project plan',
+    description: 'Prepare the next focus block',
+    time: '9:15',
+    repeat: 'today',
+    tone: 'work',
+    icon: ListChecks,
+    urgent: true,
+  },
+  {
+    title: 'Send weekly update',
+    description: 'Wrap the notes into one message',
+    time: '11:30',
+    repeat: 'once',
+    tone: 'life',
+    icon: CheckCircle2,
+  },
+  {
+    title: 'Plan evening reset',
+    description: 'Clear tomorrow before dinner',
+    time: '18:00',
+    repeat: 'daily',
+    tone: 'plans',
+    icon: Flag,
+  },
+];
 
-function ReminderCard({ reminder, index }) {
-  const Icon = typeIcons[reminder.type] || Circle;
+const habits = [
+  { label: 'Water', icon: '💧', tone: 'work', done: true },
+  { label: 'Read', icon: '📖', tone: 'life' },
+  { label: 'Walk', icon: '🚶', tone: 'sport' },
+  { label: 'Review', icon: '✓', tone: 'plans' },
+];
+
+const tabs = [
+  { label: 'Home', icon: Home, selected: true },
+  { label: 'Calendar', icon: CalendarDays },
+  { label: 'Add', icon: Plus },
+  { label: 'Stats', icon: BarChart3 },
+  { label: 'Settings', icon: Settings },
+];
+
+function HabitItem({ habit }) {
+  return (
+    <span className={`app-habit app-tone-${habit.tone}`}>
+      <span className="app-habit-ring">
+        <span>{habit.done ? <CheckCircle2 size={14} strokeWidth={2.5} /> : habit.icon}</span>
+      </span>
+      <small>{habit.label}</small>
+    </span>
+  );
+}
+
+function ReminderRow({ reminder }) {
+  const Icon = reminder.icon;
 
   return (
-    <article className="phone-reminder-card" style={{ '--card-index': index }}>
-      <span className="phone-category-icon" style={{ '--item-color': reminder.color }}>
-        <Icon size={15} strokeWidth={2.3} />
-      </span>
-      <div className="phone-card-body">
-        <div className="phone-card-title-row">
-          <h4>{reminder.title}</h4>
-          {reminder.pinned ? <span className="pin-indicator">Pinned</span> : null}
-        </div>
+    <article className={`app-reminder-row app-tone-${reminder.tone}`}>
+      <span className="app-row-icon"><Icon size={14} strokeWidth={2.4} /></span>
+      <div>
+        <h5>
+          {reminder.title}
+          {reminder.urgent ? <em>Urgent</em> : null}
+        </h5>
         <p>{reminder.description}</p>
-        <div className="phone-card-meta">
-          <span><Clock3 size={11} strokeWidth={2.3} /> {reminder.time}</span>
-          <span>{reminder.type}</span>
-        </div>
+        <small><Clock3 size={10} strokeWidth={2.3} /> {reminder.time} · {reminder.repeat}</small>
       </div>
-      <button type="button" aria-label={`Complete ${reminder.title}`}>
-        <CheckCircle2 size={15} strokeWidth={2.4} />
+      <button type="button" aria-label={`Edit ${reminder.title}`}>
+        <SlidersHorizontal size={12} strokeWidth={2.4} />
       </button>
     </article>
   );
@@ -56,90 +94,128 @@ function ReminderCard({ reminder, index }) {
 
 export default function PhonePreview() {
   return (
-    <div id="preview" className="phone-preview" aria-label="Remindly app preview">
+    <div id="preview" className="phone-preview" aria-label="Remindly iPhone Home screen preview">
       <div className="phone-shell">
+        <div className="phone-side-button phone-side-button-left" aria-hidden="true" />
+        <div className="phone-side-button phone-side-button-right" aria-hidden="true" />
+
         <div className="phone-frame">
-          <div className="phone-sensor" />
           <div className="phone-screen">
-            <div className="phone-status">
+            <div className="phone-dynamic-island" aria-hidden="true" />
+
+            <div className="app-status">
               <span>9:41</span>
               <span>5G&nbsp;&nbsp;100%</span>
             </div>
 
-            <div className="phone-app-header">
-              <div>
-                <span>Tuesday, 16 June</span>
-                <strong>Today</strong>
-              </div>
-              <button type="button" className="phone-add-button" aria-label="Add reminder">
-                <Plus size={19} strokeWidth={2.5} />
-              </button>
-            </div>
-
-            <section className="phone-overview-card">
-              <div>
-                <span>Calm productivity overview</span>
-                <h3>8 items planned</h3>
-                <p>5 tasks, 2 habits, 1 event</p>
-              </div>
-              <div className="phone-progress-ring" aria-label="62 percent complete">
-                <span>62%</span>
-              </div>
-            </section>
-
-            <div className="phone-focus-row" aria-label="Today progress">
-              <span><CheckCircle2 size={13} strokeWidth={2.4} /> 5 complete</span>
-              <span><Clock3 size={13} strokeWidth={2.4} /> Next at 9:15</span>
-            </div>
-
-            <div className="phone-segmented" role="tablist" aria-label="Task filters">
-              {['Today', 'Tasks', 'Habits', 'Events'].map((item) => (
-                <button key={item} type="button" className={item === 'Today' ? 'is-active' : ''}>
-                  {item}
+            <div className="app-home-screen">
+              <header className="app-header">
+                <button type="button" aria-label="Recent notifications">
+                  <Bell size={18} fill="currentColor" strokeWidth={0} />
                 </button>
-              ))}
-            </div>
+                <strong>Remindly</strong>
+                <span>VA</span>
+              </header>
 
-            <div className="phone-category-row">
-              {categories.map((category) => (
-                <div
-                  key={category.name}
-                  className="phone-category-chip"
-                  style={{ '--item-color': category.color }}
-                >
-                  <span />
-                  <strong>{category.count}</strong>
-                  <small>{category.name}</small>
-                </div>
-              ))}
-            </div>
+              <section className="app-title">
+                <p>Good morning</p>
+                <h3>Today's Overview</h3>
+              </section>
 
-            <section className="phone-list-section">
-              <div className="phone-section-heading">
-                <span>Next reminders</span>
-                <strong>Calm focus</strong>
-              </div>
-              <div className="phone-reminder-list">
-                {reminders.map((reminder, index) => (
-                  <ReminderCard key={reminder.title} reminder={reminder} index={index} />
+              <nav className="app-segmented" aria-label="Home filters">
+                {filters.map((filter) => (
+                  <span key={filter} className={filter === 'Tasks' ? 'is-active' : ''}>
+                    {filter}
+                  </span>
                 ))}
-              </div>
-            </section>
+              </nav>
 
-            <nav className="phone-tabbar" aria-label="App tabs">
-              {tabItems.map((item, index) => (
-                <span key={`${item}-${index}`} className={index === 0 ? 'is-selected' : ''}>
-                  {(() => {
-                    const Icon = tabIcons[item];
-                    return index === 2 ? (
-                      <span className="phone-tab-add"><Plus size={18} strokeWidth={2.5} /></span>
-                    ) : (
-                      <Icon size={19} strokeWidth={2.3} />
-                    );
-                  })()}
-                </span>
-              ))}
-            </nav>
+              <div className="app-search">
+                <Search size={14} strokeWidth={2.2} />
+                <span>Search...</span>
+              </div>
+
+              <main className="app-content">
+                <article className="app-now-card">
+                  <div className="app-card-topline">
+                    <span><Target size={11} strokeWidth={2.5} /> Now</span>
+                    <small>Focus</small>
+                  </div>
+                  <div className="app-now-main">
+                    <span><Target size={18} strokeWidth={2.4} /></span>
+                    <div>
+                      <h4>Review project plan</h4>
+                      <p>Prepare the next focus block before the day fills up.</p>
+                    </div>
+                  </div>
+                  <div className="app-now-detail">
+                    <Clock3 size={12} strokeWidth={2.3} />
+                    9:15 today
+                  </div>
+                </article>
+
+                <section className="app-priority-section">
+                  <h4>Today's Top Priority</h4>
+                  <article className="app-priority-card">
+                    <span className="app-progress-ring"><Flag size={14} strokeWidth={2.4} /></span>
+                    <div>
+                      <h5>Weekly roadmap</h5>
+                      <p>2 of 5 stages complete</p>
+                      <span><span /></span>
+                    </div>
+                  </article>
+                </section>
+
+                <section className="app-habits-card">
+                  <div className="app-section-heading">
+                    <h4>Today's Habits</h4>
+                    <span>1 of 4</span>
+                  </div>
+                  <div className="app-habit-row">
+                    {habits.map((habit) => (
+                      <HabitItem key={habit.label} habit={habit} />
+                    ))}
+                  </div>
+                </section>
+
+                <section className="app-reminders-section">
+                  <div className="app-section-heading">
+                    <h4>To Do</h4>
+                    <span>3</span>
+                  </div>
+                  <div className="app-reminder-list">
+                    {reminders.map((reminder) => (
+                      <ReminderRow key={reminder.title} reminder={reminder} />
+                    ))}
+                  </div>
+                </section>
+
+                <section className="app-mini-grid" aria-label="Plans and events">
+                  <article>
+                    <CalendarDays size={15} strokeWidth={2.4} />
+                    <strong>1 event</strong>
+                    <span>Team sync</span>
+                  </article>
+                  <article>
+                    <Flame size={15} strokeWidth={2.4} />
+                    <strong>2 habits</strong>
+                    <span>Still open</span>
+                  </article>
+                </section>
+              </main>
+
+              <nav className="app-tabbar" aria-label="App tabs">
+                {tabs.map((tab) => {
+                  const Icon = tab.icon;
+                  return (
+                    <span key={tab.label} className={tab.selected ? 'is-selected' : ''}>
+                      <Icon size={tab.label === 'Add' ? 20 : 18} strokeWidth={2.35} />
+                      <small>{tab.label}</small>
+                    </span>
+                  );
+                })}
+              </nav>
+            </div>
           </div>
         </div>
       </div>

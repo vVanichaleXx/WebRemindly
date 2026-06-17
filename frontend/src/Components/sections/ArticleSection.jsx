@@ -8,8 +8,8 @@ export default function ArticleSection() {
       <div className="section-heading-row">
         <h3 id="journal-title">Short notes about the product philosophy.</h3>
         <p>
-          These blocks make the site feel more considered: less sales page, more calm explanation
-          of how the app thinks.
+          Remindly is built around a simple idea: the app should help you decide what matters next,
+          then get out of the way.
         </p>
       </div>
 
