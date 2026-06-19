@@ -1075,6 +1075,7 @@
 }
 
 .roadmap-section {
+  position: relative;
   width: 100%;
 }
 
@@ -1157,8 +1158,6 @@
   font-size: 0.78rem;
   font-weight: 760;
   backdrop-filter: blur(18px);
-  animation: roadmapNodeFloat 5600ms ease-in-out infinite;
-  animation-delay: calc(var(--node-index, 0) * -900ms);
 }
 
 .roadmap-node svg {
@@ -1191,50 +1190,79 @@
 
 .roadmap-track {
   position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 74px minmax(0, 1fr);
-  row-gap: 18px;
-  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: visible;
+  padding: clamp(14px, 2vw, 28px) 0 clamp(22px, 3vw, 44px);
 }
 
-.roadmap-line {
+.roadmap-track::before {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 2px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, transparent, rgb(127 176 255 / 0.26), rgb(48 117 224 / 0.62), transparent);
-  transform: translateX(-50%);
+  inset: 6% 8% 9%;
+  z-index: 0;
+  content: "";
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 9%, rgb(48 117 224 / 0.16), transparent 22%),
+    radial-gradient(circle at 82% 46%, rgb(127 176 255 / 0.13), transparent 24%),
+    radial-gradient(circle at 25% 82%, rgb(133 89 214 / 0.12), transparent 22%);
+  filter: blur(10px);
+  opacity: 0.82;
 }
 
-.roadmap-line-glow {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 2px;
-  height: 34%;
-  border-radius: 999px;
-  background: linear-gradient(180deg, transparent, #7fb0ff, transparent);
-  box-shadow: 0 0 34px rgb(48 117 224 / 0.72);
-  transform: translateX(-50%);
-  animation: roadmapLineTravel 5200ms ease-in-out infinite;
+.roadmap-path-step {
+  display: contents;
 }
 
 .roadmap-card {
+  --roadmap-from-x: -96px;
+  --roadmap-overshoot-x: 6px;
+  --roadmap-card-width: 520px;
+  --roadmap-card-y: 0px;
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 74px minmax(0, 1fr);
-  grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 1fr) minmax(74px, 132px) minmax(0, 1fr);
   align-items: center;
+  min-height: clamp(238px, 24vw, 304px);
 }
 
-.roadmap-card:nth-of-type(even) .roadmap-card-content {
+.roadmap-card-right {
+  --roadmap-from-x: 96px;
+  --roadmap-overshoot-x: -6px;
+}
+
+.roadmap-card-1 {
+  --roadmap-card-width: 500px;
+}
+
+.roadmap-card-2 {
+  --roadmap-from-x: 132px;
+  --roadmap-overshoot-x: -8px;
+  --roadmap-card-width: 560px;
+  --roadmap-card-y: -18px;
+}
+
+.roadmap-card-3 {
+  --roadmap-from-x: -124px;
+  --roadmap-overshoot-x: 7px;
+  --roadmap-card-width: 540px;
+  --roadmap-card-y: 10px;
+}
+
+.roadmap-card-4 {
+  --roadmap-from-x: 118px;
+  --roadmap-overshoot-x: -7px;
+  --roadmap-card-width: 500px;
+  --roadmap-card-y: -8px;
+}
+
+.roadmap-card-left .roadmap-card-content {
   grid-column: 1;
 }
 
-.roadmap-card:nth-of-type(odd) .roadmap-card-content {
+.roadmap-card-right .roadmap-card-content {
   grid-column: 3;
 }
 
@@ -1248,6 +1276,7 @@
 }
 
 .roadmap-card-marker span {
+  position: relative;
   display: grid;
   width: 46px;
   height: 46px;
@@ -1265,10 +1294,23 @@
   font-weight: 820;
 }
 
+.roadmap-card-marker span::before {
+  position: absolute;
+  inset: -12px;
+  z-index: -1;
+  content: "";
+  border: 1px solid rgb(127 176 255 / 0.16);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(48 117 224 / 0.22), transparent 64%);
+  opacity: 0.78;
+}
+
 .roadmap-card-content {
   position: relative;
   min-height: 276px;
   overflow: hidden;
+  width: min(100%, var(--roadmap-card-width));
+  margin-top: var(--roadmap-card-y);
   padding: 24px;
   border: 1px solid var(--page-stroke);
   border-radius: 30px;
@@ -1284,6 +1326,40 @@
     box-shadow 320ms ease;
 }
 
+.roadmap-card-left .roadmap-card-content {
+  justify-self: end;
+}
+
+.roadmap-card-right .roadmap-card-content {
+  justify-self: start;
+}
+
+.roadmap-card.reveal-on-scroll {
+  opacity: 0;
+  filter: saturate(0.9);
+  transform: translate3d(var(--roadmap-from-x), 24px, 0) scale(0.96);
+  transition:
+    border-color 320ms ease,
+    background 320ms ease,
+    box-shadow 320ms ease,
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.roadmap-card.reveal-on-scroll.is-visible {
+  opacity: 1;
+  filter: saturate(1);
+  animation: roadmapCardPathIn 860ms cubic-bezier(0.22, 1, 0.36, 1) var(--path-delay, 0ms) both;
+}
+
+.roadmap-card.reveal-on-scroll .roadmap-card-marker span {
+  opacity: 0;
+  transform: scale(0.68);
+}
+
+.roadmap-card.reveal-on-scroll.is-visible .roadmap-card-marker span {
+  animation: roadmapNodeLight 520ms cubic-bezier(0.22, 1, 0.36, 1) var(--path-delay, 0ms) both;
+}
+
 .roadmap-card-content::before {
   position: absolute;
   inset: 0;
@@ -1297,6 +1373,7 @@
 }
 
 .roadmap-card:hover .roadmap-card-content {
+  z-index: 4;
   border-color: rgb(127 176 255 / 0.36);
   background:
     linear-gradient(135deg, rgb(48 117 224 / 0.16), rgb(255 255 255 / 0.055)),
@@ -1304,7 +1381,7 @@
   box-shadow:
     0 28px 82px rgb(0 0 0 / 0.34),
     0 0 42px rgb(48 117 224 / 0.13);
-  transform: translateY(-6px);
+  transform: translateY(-8px) scale(1.018);
 }
 
 .roadmap-card:hover .roadmap-card-content::before {
@@ -1328,6 +1405,38 @@
   font-weight: 820;
 }
 
+.roadmap-card-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 22px;
+}
+
+.roadmap-card-dots i {
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #9dc4ff;
+  box-shadow:
+    0 0 0 4px rgb(48 117 224 / 0.08),
+    0 0 16px rgb(48 117 224 / 0.44);
+  opacity: 0.72;
+}
+
+.roadmap-card-dots i:nth-child(2) {
+  width: 9px;
+  height: 9px;
+  opacity: 1;
+}
+
+.roadmap-card-dots i:nth-child(3) {
+  background: rgb(69 186 135 / 0.9);
+  box-shadow:
+    0 0 0 4px rgb(69 186 135 / 0.07),
+    0 0 16px rgb(69 186 135 / 0.28);
+}
+
 .roadmap-card h4 {
   position: relative;
   z-index: 1;
@@ -1348,6 +1457,105 @@
   font-size: 0.96rem;
   font-weight: 500;
   line-height: 1.58;
+}
+
+.roadmap-path-connector {
+  --connector-left: 50%;
+  --connector-cross-left: 26%;
+  --connector-cross-width: 50%;
+  --connector-cross-angle: -8deg;
+  position: relative;
+  z-index: 1;
+  min-height: clamp(74px, 8vw, 118px);
+}
+
+.roadmap-path-connector-left-to-right {
+  --connector-cross-left: 25%;
+  --connector-cross-width: 52%;
+  --connector-cross-angle: -9deg;
+}
+
+.roadmap-path-connector-right-to-left {
+  --connector-cross-left: 23%;
+  --connector-cross-width: 52%;
+  --connector-cross-angle: 9deg;
+}
+
+.roadmap-dot-trail {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
+
+.roadmap-dot-trail i {
+  position: absolute;
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, #f4fbff 0 18%, #9dc4ff 36%, #3075e0 72%);
+  box-shadow:
+    0 0 0 5px rgb(48 117 224 / 0.07),
+    0 0 20px rgb(48 117 224 / 0.42);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.62);
+}
+
+.roadmap-dot-trail-vertical {
+  top: 0;
+  left: var(--connector-left);
+  width: 1px;
+  height: 58%;
+}
+
+.roadmap-dot-trail-vertical i {
+  left: 50%;
+  top: var(--dot-pos);
+}
+
+.roadmap-dot-trail-cross {
+  right: auto;
+  bottom: 10%;
+  left: var(--connector-cross-left);
+  width: var(--connector-cross-width);
+  height: 1px;
+  transform: rotate(var(--connector-cross-angle));
+  transform-origin: center;
+}
+
+.roadmap-dot-trail-cross i {
+  top: 50%;
+  left: var(--dot-pos);
+}
+
+.roadmap-path-connector-right-to-left .roadmap-dot-trail-cross i {
+  left: calc(100% - var(--dot-pos));
+}
+
+.roadmap-path-connector.reveal-on-scroll {
+  opacity: 1;
+  filter: none;
+  transform: none;
+  transition: none;
+}
+
+.roadmap-path-connector.reveal-on-scroll.is-visible .roadmap-dot-trail i {
+  animation: roadmapDotReveal 620ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--path-delay, 0ms) + var(--dot-delay, 0ms)) both;
+}
+
+.roadmap-closing {
+  max-width: 660px;
+  margin: clamp(8px, 2vw, 18px) auto 0;
+  color: rgb(226 232 244 / 0.62);
+  font-size: clamp(1rem, 1.5vw, 1.18rem);
+  font-weight: 560;
+  line-height: 1.62;
+  text-align: center;
+}
+
+.roadmap-closing.reveal-on-scroll.is-visible {
+  transition-delay: 1180ms;
 }
 
 .tutorial-card h4 {
@@ -2614,6 +2822,7 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
+  overflow: visible;
 }
 
 .feature-card,
@@ -2629,10 +2838,19 @@
 
 .feature-card {
   position: relative;
+  z-index: 1;
   min-height: 330px;
   overflow: hidden;
   padding: 22px;
   border-radius: 28px;
+  transform-origin: center;
+  transition:
+    z-index 0ms linear 0ms,
+    border-color 660ms ease,
+    background 660ms ease,
+    box-shadow 660ms ease,
+    filter 660ms ease,
+    transform 680ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .feature-card::after {
@@ -2642,6 +2860,63 @@
   content: "";
   border-radius: 999px;
   background: linear-gradient(90deg, var(--tone-glow), transparent);
+  opacity: 0.82;
+  transition:
+    opacity 560ms ease,
+    transform 680ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.feature-card.reveal-on-scroll {
+  --feature-from-x: 0px;
+  --feature-from-y: 90px;
+  opacity: 0;
+  filter: saturate(0.92);
+  transform: translate3d(var(--feature-from-x), var(--feature-from-y), 0) scale(0.94);
+  transition:
+    border-color 660ms ease,
+    background 660ms ease,
+    box-shadow 660ms ease,
+    filter 660ms ease,
+    transform 680ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.feature-card.reveal-on-scroll.is-visible {
+  opacity: 1;
+  filter: saturate(1);
+  animation: featureDirectionalReveal 980ms cubic-bezier(0.2, 0.82, 0.18, 1) var(--reveal-delay, 0ms) both;
+}
+
+.feature-card.reveal-on-scroll:nth-child(1) {
+  --feature-from-x: -140px;
+  --feature-from-y: 30px;
+}
+
+.feature-card.reveal-on-scroll:nth-child(2) {
+  --feature-from-x: 0px;
+  --feature-from-y: 90px;
+}
+
+.feature-card.reveal-on-scroll:nth-child(3) {
+  --feature-from-x: 140px;
+  --feature-from-y: 30px;
+}
+
+.feature-card:hover {
+  z-index: 14;
+  border-color: color-mix(in srgb, var(--tone-glow), white 12%);
+  background:
+    radial-gradient(circle at 24% 12%, color-mix(in srgb, var(--tone-glow), transparent 70%), transparent 38%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.14), rgb(255 255 255 / 0.07));
+  box-shadow:
+    0 42px 120px rgb(0 0 0 / 0.44),
+    0 0 72px color-mix(in srgb, var(--tone-glow), transparent 74%),
+    inset 0 1px 0 rgb(255 255 255 / 0.13);
+  transform: translate3d(0, -15px, 0) scale(1.1) !important;
+}
+
+.feature-card:hover::after {
+  opacity: 1;
+  transform: scaleX(1.08);
 }
 
 .tone-blue {
@@ -2707,12 +2982,71 @@
   line-height: 1.58;
 }
 
+.feature-extra,
+.flow-extra {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  left: 18px;
+  z-index: 3;
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 14px;
+  border: 1px solid rgb(127 176 255 / 0.18);
+  border-radius: 18px;
+  background: #020305;
+  box-shadow:
+    0 24px 60px rgb(0 0 0 / 0.58),
+    0 0 34px rgb(48 117 224 / 0.12),
+    inset 0 1px 0 rgb(255 255 255 / 0.08);
+  opacity: 0;
+  transform: translate3d(0, 16px, 0) scale(0.98);
+  transition:
+    max-height 720ms cubic-bezier(0.16, 1, 0.3, 1),
+    padding 640ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 520ms ease 130ms,
+    transform 680ms cubic-bezier(0.16, 1, 0.3, 1) 80ms;
+}
+
+.feature-extra span,
+.flow-extra span {
+  display: inline-flex;
+  min-height: 22px;
+  align-items: center;
+  padding: 0 8px;
+  border: 1px solid rgb(127 176 255 / 0.16);
+  border-radius: 999px;
+  color: rgb(157 196 255 / 0.82);
+  background: rgb(48 117 224 / 0.1);
+  font-size: 0.65rem;
+  font-weight: 820;
+}
+
+.feature-extra p,
+.flow-extra p {
+  margin: 9px 0 0;
+  color: rgb(226 232 244 / 0.72);
+  font-size: 0.82rem;
+  font-weight: 520;
+  line-height: 1.5;
+}
+
+.feature-card:hover .feature-extra,
+.flow-step:hover .flow-extra {
+  max-height: 178px;
+  padding-top: 13px;
+  padding-bottom: 13px;
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
 .flow-visual {
   position: relative;
+  isolation: isolate;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
-  overflow: hidden;
+  overflow: visible;
   padding: 20px;
   border: 1px solid var(--page-stroke);
   border-radius: 34px;
@@ -2730,14 +3064,78 @@
   border-radius: 999px;
   background: linear-gradient(90deg, transparent, #3075e0, #7fb0ff, transparent);
   transform-origin: left;
-  animation: flowTrace 4600ms ease-in-out infinite;
+  opacity: 0;
+  transform: scaleX(0.04);
+}
+
+.flow-line.reveal-on-scroll {
+  filter: none;
+  transform: scaleX(0.04);
+  transition: none;
+}
+
+.flow-line.reveal-on-scroll.is-visible {
+  opacity: 1;
+  animation: flowConnectorAssemble 1320ms cubic-bezier(0.22, 1, 0.36, 1) 140ms backwards;
 }
 
 .flow-step {
   position: relative;
+  z-index: 1;
   min-height: 254px;
+  overflow: visible;
   padding: 22px;
   border-radius: 26px;
+  transform-origin: center;
+  transition:
+    z-index 0ms linear 0ms,
+    border-color 660ms ease,
+    background 660ms ease,
+    box-shadow 660ms ease,
+    transform 680ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.flow-step.reveal-on-scroll {
+  opacity: 0;
+  transition:
+    border-color 660ms ease,
+    background 660ms ease,
+    box-shadow 660ms ease,
+    transform 680ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.flow-step.reveal-on-scroll:nth-of-type(odd):not(.is-visible) {
+  transform: translate3d(-118px, 22px, 0) scale(0.92);
+}
+
+.flow-step.reveal-on-scroll:nth-of-type(even):not(.is-visible) {
+  transform: translate3d(118px, 22px, 0) scale(0.92);
+}
+
+.flow-step.reveal-on-scroll.is-visible {
+  opacity: 1;
+}
+
+.flow-step.reveal-on-scroll.is-visible:nth-of-type(odd) {
+  animation: flowStepAssembleLeft 1040ms cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms) backwards;
+}
+
+.flow-step.reveal-on-scroll.is-visible:nth-of-type(even) {
+  animation: flowStepAssembleRight 1040ms cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms) backwards;
+}
+
+.flow-step:hover {
+  z-index: 13;
+  border-color: rgb(127 176 255 / 0.32);
+  background:
+    radial-gradient(circle at 18% 12%, rgb(127 176 255 / 0.15), transparent 34%),
+    linear-gradient(180deg, rgb(48 117 224 / 0.16), rgb(255 255 255 / 0.07)),
+    rgb(255 255 255 / 0.05);
+  box-shadow:
+    0 42px 112px rgb(0 0 0 / 0.42),
+    0 0 66px rgb(48 117 224 / 0.18),
+    inset 0 1px 0 rgb(255 255 255 / 0.12);
+  transform: translate3d(0, -14px, 0) scale(1.085);
 }
 
 .flow-index {
@@ -2866,9 +3264,112 @@
 }
 
 .article-card {
+  position: relative;
+  z-index: 1;
   min-height: 300px;
+  overflow: visible;
   padding: 22px;
   border-radius: 28px;
+  transform-origin: center;
+  transition:
+    z-index 0ms linear 0ms,
+    border-color 640ms ease,
+    background 640ms ease,
+    box-shadow 640ms ease,
+    transform 660ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.article-card::before {
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  content: "";
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 24% 12%, rgb(127 176 255 / 0.18), transparent 34%),
+    linear-gradient(145deg, rgb(255 255 255 / 0.1), transparent 54%);
+  opacity: 0;
+  transition: opacity 620ms ease;
+}
+
+.article-card::after {
+  display: block;
+  width: fit-content;
+  margin-top: 18px;
+  padding: 6px 9px;
+  border: 1px solid rgb(127 176 255 / 0.12);
+  border-radius: 999px;
+  color: rgb(157 196 255 / 0.72);
+  background: rgb(48 117 224 / 0.08);
+  content: "Hover to expand";
+  font-size: 0.68rem;
+  font-weight: 780;
+  line-height: 1;
+  opacity: 0.86;
+  transition:
+    opacity 420ms ease,
+    transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.article-card.reveal-on-scroll {
+  opacity: 0;
+  filter: saturate(0.9);
+  transition:
+    border-color 640ms ease,
+    background 640ms ease,
+    box-shadow 640ms ease,
+    transform 660ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.article-card.reveal-on-scroll.is-visible {
+  opacity: 1;
+  filter: saturate(1);
+}
+
+.article-card.reveal-on-scroll:nth-child(1):not(.is-visible) {
+  transform: translate3d(-150px, -96px, 0) rotate(-10deg) scale(0.88);
+}
+
+.article-card.reveal-on-scroll:nth-child(2):not(.is-visible) {
+  transform: translate3d(160px, -92px, 0) rotate(9deg) scale(0.88);
+}
+
+.article-card.reveal-on-scroll:nth-child(3):not(.is-visible) {
+  transform: translate3d(-128px, 124px, 0) rotate(8deg) scale(0.88);
+}
+
+.article-card.reveal-on-scroll.is-visible:nth-child(1) {
+  animation: cubeCardInOne 1180ms cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms) backwards;
+}
+
+.article-card.reveal-on-scroll.is-visible:nth-child(2) {
+  animation: cubeCardInTwo 1180ms cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms) backwards;
+}
+
+.article-card.reveal-on-scroll.is-visible:nth-child(3) {
+  animation: cubeCardInThree 1180ms cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms) backwards;
+}
+
+.article-card:hover {
+  z-index: 15;
+  border-color: rgb(127 176 255 / 0.36);
+  background:
+    linear-gradient(180deg, rgb(48 117 224 / 0.18), rgb(255 255 255 / 0.085)),
+    rgb(255 255 255 / 0.07);
+  box-shadow:
+    0 42px 120px rgb(0 0 0 / 0.44),
+    0 0 70px rgb(48 117 224 / 0.2),
+    inset 0 1px 0 rgb(255 255 255 / 0.12);
+  transform: translate3d(0, -16px, 0) scale(1.11);
+}
+
+.article-card:hover::before {
+  opacity: 1;
+}
+
+.article-card:hover::after {
+  opacity: 0;
+  transform: translateY(8px);
 }
 
 .article-meta {
@@ -2889,6 +3390,60 @@
 .article-card h4 {
   font-size: 1.55rem;
   line-height: 1.08;
+}
+
+.article-card .article-extra {
+  max-height: 0;
+  overflow: hidden;
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid rgb(127 176 255 / 0.18);
+  border-radius: 18px;
+  background: #020305;
+  box-shadow:
+    0 24px 60px rgb(0 0 0 / 0.58),
+    0 0 34px rgb(48 117 224 / 0.12),
+    inset 0 1px 0 rgb(255 255 255 / 0.08);
+  opacity: 0;
+  transform: translateY(14px) scale(0.985);
+  transition:
+    max-height 760ms cubic-bezier(0.16, 1, 0.3, 1),
+    margin-top 680ms cubic-bezier(0.16, 1, 0.3, 1),
+    padding 680ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 520ms ease 160ms,
+    transform 680ms cubic-bezier(0.16, 1, 0.3, 1) 100ms;
+}
+
+.article-card .article-extra span,
+.final-cta .final-cta-extra span {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  padding: 0 9px;
+  border: 1px solid rgb(127 176 255 / 0.16);
+  border-radius: 999px;
+  color: rgb(157 196 255 / 0.82);
+  background: rgb(48 117 224 / 0.1);
+  font-size: 0.68rem;
+  font-weight: 820;
+}
+
+.article-card .article-extra p,
+.final-cta .final-cta-extra p {
+  margin: 10px 0 0;
+  color: rgb(226 232 244 / 0.68);
+  font-size: 0.88rem;
+  font-weight: 520;
+  line-height: 1.58;
+}
+
+.article-card:hover .article-extra {
+  max-height: 220px;
+  margin-top: 20px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 .pricing-section {
@@ -3047,10 +3602,13 @@
 }
 
 .final-cta {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 28px;
+  overflow: hidden;
   margin-top: 14px;
   margin-bottom: 24px;
   padding: clamp(26px, 4vw, 48px);
@@ -3058,6 +3616,63 @@
   background:
     linear-gradient(120deg, rgb(48 117 224 / 0.24), rgb(133 89 214 / 0.13) 42%, rgb(255 255 255 / 0.075)),
     rgb(255 255 255 / 0.04);
+  transform-origin: center bottom;
+  transition:
+    z-index 0ms linear 0ms,
+    border-color 640ms ease,
+    background 640ms ease,
+    box-shadow 640ms ease,
+    transform 680ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.final-cta::before {
+  position: absolute;
+  right: -12%;
+  bottom: -58%;
+  left: 28%;
+  height: 220px;
+  content: "";
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(48 117 224 / 0.36), rgb(48 117 224 / 0.12) 46%, transparent 72%);
+  filter: blur(18px);
+  opacity: 0.72;
+  transition:
+    opacity 640ms ease,
+    transform 680ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.final-cta > * {
+  position: relative;
+  z-index: 1;
+}
+
+.final-cta.reveal-on-scroll.is-visible {
+  opacity: 1;
+  filter: saturate(1);
+  animation: finalCubeCtaIn 1220ms cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms) backwards;
+}
+
+.final-cta.reveal-on-scroll:not(.is-visible) {
+  opacity: 0;
+  filter: saturate(0.9);
+  transform: translate3d(0, 132px, 0) rotate(2.5deg) scale(0.9);
+}
+
+.final-cta:hover {
+  z-index: 16;
+  border-color: rgb(127 176 255 / 0.32);
+  background:
+    linear-gradient(120deg, rgb(48 117 224 / 0.32), rgb(133 89 214 / 0.18) 42%, rgb(255 255 255 / 0.092)),
+    rgb(255 255 255 / 0.055);
+  box-shadow:
+    0 46px 130px rgb(0 0 0 / 0.42),
+    0 0 74px rgb(48 117 224 / 0.18);
+  transform: translate3d(0, -14px, 0) scale(1.045);
+}
+
+.final-cta:hover::before {
+  opacity: 1;
+  transform: translateY(-12px) scale(1.08);
 }
 
 .final-cta span {
@@ -3079,6 +3694,37 @@
   margin-top: 18px;
 }
 
+.final-cta .final-cta-extra {
+  max-height: 0;
+  overflow: hidden;
+  margin-top: 0;
+  padding: 0 14px;
+  border: 1px solid rgb(127 176 255 / 0.18);
+  border-radius: 18px;
+  background: #020305;
+  box-shadow:
+    0 24px 60px rgb(0 0 0 / 0.58),
+    0 0 34px rgb(48 117 224 / 0.12),
+    inset 0 1px 0 rgb(255 255 255 / 0.08);
+  opacity: 0;
+  transform: translateY(14px) scale(0.99);
+  transition:
+    max-height 780ms cubic-bezier(0.16, 1, 0.3, 1),
+    margin-top 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    padding 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 540ms ease 160ms,
+    transform 700ms cubic-bezier(0.16, 1, 0.3, 1) 100ms;
+}
+
+.final-cta:hover .final-cta-extra {
+  max-height: 160px;
+  margin-top: 22px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
 .final-cta a {
   flex: 0 0 auto;
   display: inline-flex;
@@ -3092,6 +3738,16 @@
   background: linear-gradient(180deg, #fff, #dce8ff);
   box-shadow: 0 18px 42px rgb(255 255 255 / 0.12);
   font-weight: 820;
+  transition:
+    transform 260ms ease,
+    box-shadow 260ms ease;
+}
+
+.final-cta:hover a {
+  box-shadow:
+    0 20px 50px rgb(255 255 255 / 0.16),
+    0 22px 60px rgb(48 117 224 / 0.22);
+  transform: translateY(-2px);
 }
 
 .site-footer {
@@ -3210,31 +3866,197 @@
   }
 }
 
-@keyframes roadmapNodeFloat {
-  0%,
-  100% {
-    transform: translateY(0);
+@keyframes flowConnectorAssemble {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.04);
   }
 
-  50% {
-    transform: translateY(-10px);
+  62% {
+    opacity: 1;
+    transform: scaleX(1.04);
+  }
+
+  78% {
+    transform: scaleX(0.96);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
   }
 }
 
-@keyframes roadmapLineTravel {
+@keyframes flowStepAssembleLeft {
   0% {
     opacity: 0;
-    transform: translate3d(-50%, -18%, 0) scaleY(0.55);
+    transform: translate3d(-118px, 22px, 0) scale(0.92);
   }
 
-  16%,
-  72% {
+  58% {
     opacity: 1;
+    transform: translate3d(13px, -7px, 0) scale(1.025);
+  }
+
+  76% {
+    transform: translate3d(-6px, 3px, 0) scale(0.992);
   }
 
   100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes flowStepAssembleRight {
+  0% {
     opacity: 0;
-    transform: translate3d(-50%, 220%, 0) scaleY(0.82);
+    transform: translate3d(118px, 22px, 0) scale(0.92);
+  }
+
+  58% {
+    opacity: 1;
+    transform: translate3d(-13px, -7px, 0) scale(1.025);
+  }
+
+  76% {
+    transform: translate3d(6px, 3px, 0) scale(0.992);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes featureDirectionalReveal {
+  0% {
+    opacity: 0;
+    box-shadow: 0 18px 50px rgb(0 0 0 / 0.22);
+    transform: translate3d(var(--feature-from-x), var(--feature-from-y), 0) scale(0.94);
+  }
+
+  62% {
+    opacity: 1;
+    box-shadow:
+      0 34px 96px rgb(0 0 0 / 0.34),
+      0 0 48px color-mix(in srgb, var(--tone-glow), transparent 72%);
+    transform: translate3d(0, -8px, 0) scale(1.018);
+  }
+
+  82% {
+    box-shadow:
+      0 28px 82px rgb(0 0 0 / 0.3),
+      0 0 38px color-mix(in srgb, var(--tone-glow), transparent 78%);
+    transform: translate3d(0, 3px, 0) scale(0.996);
+  }
+
+  100% {
+    opacity: 1;
+    box-shadow: 0 24px 70px rgb(0 0 0 / 0.26);
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes featureDirectionalMobileReveal {
+  0% {
+    opacity: 0;
+    transform: translate3d(var(--feature-from-x), var(--feature-from-y), 0) scale(0.96);
+  }
+
+  64% {
+    opacity: 1;
+    transform: translate3d(0, -5px, 0) scale(1.008);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes flowStepMobileAssemble {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 52px, 0) scale(0.94);
+  }
+
+  68% {
+    opacity: 1;
+    transform: translate3d(0, -7px, 0) scale(1.012);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes roadmapCardPathIn {
+  0% {
+    opacity: 0;
+    transform: translate3d(var(--roadmap-from-x), 24px, 0) scale(0.96);
+  }
+
+  68% {
+    opacity: 1;
+    transform: translate3d(var(--roadmap-overshoot-x), -7px, 0) scale(1.012);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes roadmapNodeLight {
+  0% {
+    opacity: 0;
+    transform: scale(0.68);
+  }
+
+  64% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes roadmapDotReveal {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.62);
+  }
+
+  68% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.16);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes roadmapConnectorDrawMobile {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.62);
+  }
+
+  68% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.12);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 
@@ -3295,6 +4117,148 @@
   }
 
   to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes cubeCardInOne {
+  0% {
+    opacity: 0;
+    transform: translate3d(-150px, -96px, 0) rotate(-10deg) scale(0.88);
+  }
+
+  54% {
+    opacity: 1;
+    transform: translate3d(20px, 12px, 0) rotate(3.5deg) scale(1.035);
+  }
+
+  67% {
+    transform: translate3d(-10px, -8px, 0) rotate(-2deg) scale(0.985);
+  }
+
+  82% {
+    transform: translate3d(6px, 4px, 0) rotate(1deg) scale(1.012);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes cubeCardInTwo {
+  0% {
+    opacity: 0;
+    transform: translate3d(160px, -92px, 0) rotate(9deg) scale(0.88);
+  }
+
+  54% {
+    opacity: 1;
+    transform: translate3d(-22px, 13px, 0) rotate(-3.5deg) scale(1.035);
+  }
+
+  67% {
+    transform: translate3d(11px, -8px, 0) rotate(2deg) scale(0.985);
+  }
+
+  82% {
+    transform: translate3d(-6px, 4px, 0) rotate(-1deg) scale(1.012);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes cubeCardInThree {
+  0% {
+    opacity: 0;
+    transform: translate3d(-128px, 124px, 0) rotate(8deg) scale(0.88);
+  }
+
+  54% {
+    opacity: 1;
+    transform: translate3d(18px, -16px, 0) rotate(-3deg) scale(1.035);
+  }
+
+  67% {
+    transform: translate3d(-10px, 9px, 0) rotate(2deg) scale(0.985);
+  }
+
+  82% {
+    transform: translate3d(5px, -4px, 0) rotate(-1deg) scale(1.012);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes finalCubeCtaIn {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 132px, 0) rotate(2.5deg) scale(0.9);
+  }
+
+  55% {
+    opacity: 1;
+    transform: translate3d(0, -18px, 0) rotate(-1deg) scale(1.025);
+  }
+
+  68% {
+    transform: translate3d(0, 11px, 0) rotate(0.8deg) scale(0.99);
+  }
+
+  84% {
+    transform: translate3d(0, -5px, 0) rotate(-0.35deg) scale(1.006);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes cubeCardMobileIn {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 78px, 0) rotate(2deg) scale(0.92);
+  }
+
+  58% {
+    opacity: 1;
+    transform: translate3d(0, -11px, 0) rotate(-0.8deg) scale(1.018);
+  }
+
+  76% {
+    transform: translate3d(0, 6px, 0) rotate(0.45deg) scale(0.992);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes finalCubeCtaMobileIn {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 86px, 0) scale(0.93);
+  }
+
+  58% {
+    opacity: 1;
+    transform: translate3d(0, -10px, 0) scale(1.014);
+  }
+
+  76% {
+    transform: translate3d(0, 5px, 0) scale(0.994);
+  }
+
+  100% {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
   }
@@ -3398,6 +4362,60 @@
     min-height: auto;
   }
 
+  .feature-card.reveal-on-scroll.is-visible {
+    animation-name: featureDirectionalMobileReveal !important;
+    animation-duration: 900ms;
+  }
+
+  .feature-card.reveal-on-scroll:nth-child(1) {
+    --feature-from-x: -40px;
+    --feature-from-y: 24px;
+  }
+
+  .feature-card.reveal-on-scroll:nth-child(2) {
+    --feature-from-x: 0px;
+    --feature-from-y: 54px;
+  }
+
+  .feature-card.reveal-on-scroll:nth-child(3) {
+    --feature-from-x: 40px;
+    --feature-from-y: 24px;
+  }
+
+  .flow-step.reveal-on-scroll.is-visible {
+    animation-name: flowStepMobileAssemble !important;
+    animation-duration: 880ms;
+  }
+
+  .flow-line.reveal-on-scroll.is-visible {
+    opacity: 0.78;
+    animation: none;
+    transform: scaleX(1);
+  }
+
+  .feature-card,
+  .flow-step {
+    overflow: hidden;
+  }
+
+  .feature-card:hover,
+  .flow-step:hover {
+    transform: translate3d(0, -5px, 0) scale(1.015);
+  }
+
+  .feature-extra,
+  .flow-extra,
+  .feature-card:hover .feature-extra,
+  .flow-step:hover .flow-extra {
+    position: static;
+    max-height: none;
+    margin-top: 16px;
+    padding: 13px 14px;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
   .page-view {
     padding-top: 58px;
   }
@@ -3417,31 +4435,52 @@
     min-height: auto;
   }
 
-  .roadmap-line {
-    top: 0;
-    bottom: 0;
-    left: 24px;
-    width: 2px;
-    height: auto;
-    background: linear-gradient(180deg, transparent, #3075e0, #7fb0ff, transparent);
+  .roadmap-track {
+    padding-left: 4px;
   }
 
-  .roadmap-line-glow {
-    left: 24px;
-  }
-
-  .roadmap-track,
   .roadmap-card {
+    --roadmap-from-x: 0px;
+    --roadmap-card-width: 100%;
+    --roadmap-card-y: 0px;
     grid-template-columns: 48px minmax(0, 1fr);
+    gap: 14px;
+    min-height: auto;
   }
 
   .roadmap-card-marker {
     grid-column: 1;
   }
 
-  .roadmap-card:nth-of-type(even) .roadmap-card-content,
-  .roadmap-card:nth-of-type(odd) .roadmap-card-content {
+  .roadmap-card-left .roadmap-card-content,
+  .roadmap-card-right .roadmap-card-content {
     grid-column: 2;
+    justify-self: stretch;
+    width: 100%;
+  }
+
+  .roadmap-path-connector {
+    min-height: 58px;
+  }
+
+  .roadmap-dot-trail-cross {
+    display: none;
+  }
+
+  .roadmap-dot-trail-vertical {
+    top: -2px;
+    left: 23px;
+    width: 1px;
+    height: calc(100% + 4px);
+  }
+
+  .roadmap-dot-trail-vertical i {
+    top: var(--dot-pos);
+    left: 50%;
+  }
+
+  .roadmap-path-connector.reveal-on-scroll.is-visible .roadmap-dot-trail i {
+    animation-name: roadmapConnectorDrawMobile;
   }
 
   .roadmap-system {
@@ -3970,6 +5009,58 @@
     border-radius: 24px;
   }
 
+  .article-card.reveal-on-scroll.is-visible {
+    animation-name: cubeCardMobileIn !important;
+    animation-duration: 940ms;
+  }
+
+  .article-card {
+    overflow: hidden;
+    animation: none;
+  }
+
+  .article-card:hover {
+    transform: translate3d(0, -5px, 0) scale(1.015);
+  }
+
+  .article-card::after {
+    display: none;
+  }
+
+  .article-card .article-extra,
+  .article-card:hover .article-extra {
+    max-height: 240px;
+    margin-top: 18px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .final-cta.reveal-on-scroll.is-visible {
+    animation: finalCubeCtaMobileIn 980ms cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms) backwards;
+  }
+
+  .final-cta {
+    animation: none;
+  }
+
+  .final-cta:hover {
+    transform: translate3d(0, -5px, 0) scale(1.006);
+  }
+
+  .final-cta .final-cta-extra,
+  .final-cta:hover .final-cta-extra {
+    max-height: 180px;
+    margin-top: 18px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
   .roadmap-card-content {
     min-height: auto;
     padding: 18px;
@@ -4006,8 +5097,11 @@
   .feature-card,
   .flow-step,
   .article-card,
+  .final-cta,
   .interface-card,
   .flow-line,
+  .roadmap-card,
+  .roadmap-path-connector,
   .roadmap-node,
   .roadmap-line-glow,
   .tutorial-phone,
@@ -4018,10 +5112,50 @@
     animation: none !important;
   }
 
+  .article-card,
+  .article-card.reveal-on-scroll.is-visible,
+  .final-cta,
+  .final-cta.reveal-on-scroll.is-visible,
+  .roadmap-card,
+  .roadmap-card.reveal-on-scroll.is-visible,
+  .roadmap-path-connector,
+  .roadmap-path-connector.reveal-on-scroll.is-visible .roadmap-dot-trail i {
+    animation: none !important;
+  }
+
+  .article-card .article-extra,
+  .final-cta .final-cta-extra,
+  .feature-extra,
+  .flow-extra {
+    transition: none !important;
+  }
+
+  .feature-card:hover,
+  .flow-step:hover {
+    transform: none !important;
+  }
+
+  .flow-line.reveal-on-scroll,
+  .flow-line.reveal-on-scroll.is-visible {
+    opacity: 1 !important;
+    transform: scaleX(1) !important;
+  }
+
+  .roadmap-dot-trail i {
+    opacity: 1 !important;
+    transform: translate(-50%, -50%) scale(1) !important;
+  }
+
   .reveal-on-scroll {
     opacity: 1 !important;
     filter: none !important;
     transform: none !important;
     transition: none !important;
+  }
+}
+
+@media (max-width: 980px) and (prefers-reduced-motion: reduce) {
+  .roadmap-dot-trail i {
+    transform: translate(-50%, -50%) scale(1) !important;
   }
 }

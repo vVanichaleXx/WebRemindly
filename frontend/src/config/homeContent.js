@@ -75,6 +75,7 @@ export const featureCards = [
   {
     title: 'One calm overview',
     body: 'Reminders, habits, plans, and timed events sit together in a single home view built for fast daily review.',
+    extra: 'The first screen is designed for a quick daily review: what is active now, what is next, and what should stay visible.',
     stat: '1',
     statLabel: 'daily home',
     tone: 'blue',
@@ -82,6 +83,7 @@ export const featureCards = [
   {
     title: 'Structure without friction',
     body: 'Category, priority, repeat rhythm, and time stay close to the task without turning capture into administration.',
+    extra: 'Reminders, habits, plans, and events each have a different purpose, but they belong in one calm system.',
     stat: '4',
     statLabel: 'core item types',
     tone: 'green',
@@ -89,6 +91,7 @@ export const featureCards = [
   {
     title: 'Notifications stay intentional',
     body: 'Pinned reminders, recurring habits, and scheduled events stay visible in context instead of becoming a noisy stream.',
+    extra: 'Notifications should be intentional. The app should help the user return to the day, not pull them deeper into the app.',
     stat: '0',
     statLabel: 'extra noise',
     tone: 'purple',
@@ -99,21 +102,25 @@ export const flowSteps = [
   {
     title: 'Capture',
     body: 'Add a reminder, task, habit, plan, or event as soon as it appears.',
+    extra: 'Capture should be fast enough to use before the thought disappears. Remindly keeps entry simple so the system starts with less friction.',
     meta: 'Quick entry',
   },
   {
     title: 'Shape',
     body: 'Assign category, priority, repeat rules, and reminder style.',
+    extra: 'Categories, priority, repeat rhythm, and reminder style stay close to the item, but they should not slow down the moment of capture.',
     meta: 'Smart structure',
   },
   {
     title: 'Surface',
     body: "Today's overview brings the next relevant item into view.",
+    extra: 'The home view surfaces what matters next instead of forcing the user to search through every item manually.',
     meta: 'Home timeline',
   },
   {
     title: 'Finish',
     body: 'Complete, pin, archive, or revisit with a lightweight action menu.',
+    extra: 'Finishing an item should feel lightweight: complete it, pin it, archive it, or return to it later without breaking focus.',
     meta: 'Calm closure',
   },
 ];
@@ -122,25 +129,25 @@ export const roadmapItems = [
   {
     phase: '01',
     title: 'Service integrations',
-    body: 'Calendar and productivity integrations will bring external reminders, events, and service APIs into the same calm daily view.',
-    meta: 'Calendar sync',
+    body: 'Bring calendar events, external reminders, and productivity APIs into one focused daily view.',
+    meta: 'Connected calendar',
   },
   {
     phase: '02',
-    title: 'AI productivity features',
-    body: 'Voice notes, rough text, and quick ideas can become structured reminders, tasks, plans, and notes with less manual setup.',
+    title: 'AI productivity layer',
+    body: 'Turn voice notes, rough thoughts, and quick ideas into structured reminders, tasks, plans, and notes.',
     meta: 'Assisted capture',
   },
   {
     phase: '03',
     title: 'Personalized habits',
-    body: 'Habit suggestions and routines will adapt over time, using behavior to reduce configuration and keep routines realistic.',
+    body: 'Let routines adjust over time, so habits stay realistic instead of becoming another system to manage.',
     meta: 'Adaptive routines',
   },
   {
     phase: '04',
-    title: 'Smarter daily planning',
-    body: 'Priority suggestions and day-structure recommendations will help surface what matters next without adding noise.',
+    title: 'Smarter daily direction',
+    body: 'Surface priorities, daily structure, and next steps without adding another layer of noise.',
     meta: 'Calm planning',
   },
 ];
@@ -179,18 +186,21 @@ export const articles = [
     tag: 'Product thinking',
     title: 'Why Remindly keeps the first screen calm',
     body: 'A reminder app should lower cognitive load before it asks for action. The home screen shows the next useful layer, not every possible control.',
+    extra: 'Remindly keeps the first screen focused on what helps immediately. Instead of showing every possible action, it reveals the next useful layer: what is active now, what needs attention, and what can wait.',
     readTime: '3 min',
   },
   {
     tag: 'Design notes',
     title: 'Designed around the first useful glance',
     body: 'The interface gives priority to what helps the next decision: the active moment, the top priority, and the few reminders worth seeing now.',
+    extra: 'The interface is built around the first useful glance. The goal is not to show more controls, but to make the next decision easier without forcing the user to search through the app.',
     readTime: '4 min',
   },
   {
     tag: 'Workflow',
     title: 'From notification to completion',
     body: 'Pinned reminders and recent notifications create a short loop: notice, decide, act, and return to the day without getting stuck inside the app.',
+    extra: 'Reminders, pinned items, and recent notifications create a short loop: notice, decide, complete, and return to the day. The app should help without becoming the task itself.',
     readTime: '5 min',
   },
 ];

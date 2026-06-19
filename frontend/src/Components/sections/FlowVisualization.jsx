@@ -27,6 +27,12 @@ export default function FlowVisualization() {
             <span className="flow-meta">{step.meta}</span>
             <h4>{step.title}</h4>
             <p>{step.body}</p>
+            {step.extra ? (
+              <div className="flow-extra">
+                <span>More detail</span>
+                <p>{step.extra}</p>
+              </div>
+            ) : null}
             {index < flowSteps.length - 1 ? (
               <ArrowRight className="flow-arrow" size={20} strokeWidth={2.1} aria-hidden="true" />
             ) : null}

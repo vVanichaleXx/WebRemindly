@@ -22,6 +22,10 @@ export default function ArticleSection() {
             </div>
             <h4>{article.title}</h4>
             <p>{article.body}</p>
+            <div className="article-extra">
+              <span>More detail</span>
+              <p>{article.extra}</p>
+            </div>
           </article>
         ))}
       </div>

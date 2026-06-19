@@ -10,6 +10,14 @@ export default function FinalCTA() {
           Remindly brings reminders, habits, plans, and events into one focused iPhone workspace
           for daily organization.
         </p>
+        <div className="final-cta-extra">
+          <span>More detail</span>
+          <p>
+            Start simple: organize reminders, habits, plans, and events in one calm place. Future
+            integrations, AI support, and adaptive habits can grow around the same focused
+            foundation.
+          </p>
+        </div>
       </div>
       <a href="mailto:hello@remindly.app">
         Get early access <ArrowRight size={18} strokeWidth={2.2} />

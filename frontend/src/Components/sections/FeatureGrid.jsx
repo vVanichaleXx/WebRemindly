@@ -30,6 +30,12 @@ export default function FeatureGrid() {
               </div>
               <h4>{feature.title}</h4>
               <p>{feature.body}</p>
+              {feature.extra ? (
+                <div className="feature-extra">
+                  <span>More detail</span>
+                  <p>{feature.extra}</p>
+                </div>
+              ) : null}
             </article>
           );
         })}
