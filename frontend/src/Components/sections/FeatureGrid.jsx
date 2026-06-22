@@ -3,9 +3,9 @@ import { featureCards } from '../../config/homeContent.js';
 
 const icons = [Layers3, ListChecks, BellRing];
 
-export default function FeatureGrid() {
+export default function FeatureGrid({ className = '' }) {
   return (
-    <section id="features" className="site-section feature-section" aria-labelledby="features-title">
+    <section id="features" className={`site-section feature-section ${className}`.trim()} aria-labelledby="features-title">
       <div className="section-kicker">Daily overview</div>
       <div className="section-heading-row">
         <h3 id="features-title">Everything important, arranged quietly.</h3>

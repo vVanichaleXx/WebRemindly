@@ -1,9 +1,9 @@
 import { BookOpen, Clock } from 'lucide-react';
 import { articles } from '../../config/homeContent.js';
 
-export default function ArticleSection() {
+export default function ArticleSection({ className = '' }) {
   return (
-    <section id="journal" className="site-section article-section" aria-labelledby="journal-title">
+    <section id="journal" className={`site-section article-section ${className}`.trim()} aria-labelledby="journal-title">
       <div className="section-kicker">Product thinking</div>
       <div className="section-heading-row">
         <h3 id="journal-title">Short notes about the product philosophy.</h3>

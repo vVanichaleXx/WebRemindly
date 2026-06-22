@@ -1,8 +1,8 @@
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 
-export default function FinalCTA() {
+export default function FinalCTA({ className = '' }) {
   return (
-    <section id="cta" className="site-section final-cta" aria-label="Get early access to Remindly">
+    <section id="cta" className={`site-section final-cta ${className}`.trim()} aria-label="Get early access to Remindly">
       <div>
         <span><CheckCircle2 size={16} strokeWidth={2.1} /> Next step</span>
         <h3>Start with a calmer day.</h3>

@@ -1,9 +1,9 @@
 import { CheckCircle2 } from 'lucide-react';
 import { pricingCopy } from '../../config/homeContent.js';
 
-export default function PricingSection() {
+export default function PricingSection({ className = '', note = null }) {
   return (
-    <section id="pricing" className="site-section pricing-section" aria-labelledby="pricing-title">
+    <section id="pricing" className={`site-section pricing-section ${className}`} aria-labelledby="pricing-title">
       <div className="pricing-card" aria-label="Remindly free plan">
         <div className="pricing-glow" aria-hidden="true" />
         <div className="section-kicker">Pricing</div>
@@ -25,6 +25,7 @@ export default function PricingSection() {
         </a>
         <small>No credit card required</small>
       </div>
+      {note ? <p className="pricing-page-note">{note}</p> : null}
     </section>
   );
 }

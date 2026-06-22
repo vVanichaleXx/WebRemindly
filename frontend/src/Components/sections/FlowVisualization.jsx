@@ -1,9 +1,9 @@
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { flowSteps } from '../../config/homeContent.js';
 
-export default function FlowVisualization() {
+export default function FlowVisualization({ className = '' }) {
   return (
-    <section id="flow" className="site-section flow-section" aria-labelledby="flow-title">
+    <section id="flow" className={`site-section flow-section ${className}`.trim()} aria-labelledby="flow-title">
       <div className="section-kicker">Everyday flow</div>
       <div className="section-heading-row">
         <h3 id="flow-title">From a thought to a finished reminder.</h3>

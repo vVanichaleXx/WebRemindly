@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
   Bell,
   CalendarDays,
+  BarChart3,
   CheckCircle2,
   ChevronRight,
   Clock3,
@@ -9,12 +10,20 @@ import {
   Home,
   Layers3,
   ListChecks,
+  MapPin,
+  MessageCircle,
   MinusCircle,
+  Pencil,
   Plus,
+  Repeat2,
   Settings,
+  ShieldCheck,
   SlidersHorizontal,
+  Sparkles,
   Target,
+  TrendingUp,
 } from 'lucide-react';
+import usePresentationSections, { getPresentationClass } from '../../utils/usePresentationSections.js';
 
 const tutorialTabs = [
   {
@@ -43,23 +52,46 @@ const tutorialTabs = [
   {
     id: 'reminders',
     label: 'Reminders',
-    title: 'Filter what needs attention.',
-    text: 'Reminders use category cards, timeline sections, compact rows, and a small edit control so each task stays easy to open.',
+    title: 'Capture, then refine.',
+    text: 'Reminder setup stays close to the item: title, time, priority, category, repeat rhythm, and notification style stay fast to adjust.',
     explanations: [
       {
-        title: 'Categories',
-        text: 'Category cards help sort reminders without adding a heavy sidebar.',
-        target: 'categories',
+        title: 'Flexible setup',
+        text: 'A reminder can hold a clear title, date, time, priority, category, repeat rhythm, and alert style without slowing capture.',
+        target: 'setup',
       },
       {
-        title: 'Reminder cards',
-        text: 'Open a row to view or edit the reminder details.',
+        title: 'Open to edit',
+        text: 'Compact reminder rows can open into a focused preview or edit sheet when the item needs more context.',
         target: 'cards',
       },
       {
-        title: 'Future swipe actions',
-        text: 'Pin and delete gestures can stay as native swipe actions later.',
-        target: 'note',
+        title: 'Smarter categories',
+        text: 'Categories start as simple structure. As a future direction, work, personal, and context-aware signals can help show only useful reminders at the right moment.',
+        target: 'context',
+      },
+    ],
+  },
+  {
+    id: 'events',
+    label: 'Events',
+    title: 'See what belongs to time.',
+    text: 'Events are scheduled blocks with status, category, countdown, and reminder details alongside the rest of the day.',
+    explanations: [
+      {
+        title: 'Time-based events',
+        text: 'Events belong to a specific date, time, or recurring block.',
+        target: 'time',
+      },
+      {
+        title: 'Calendar structure',
+        text: 'Calendar keeps time-based items visible, so events and scheduled reminders do not get lost inside a simple task list.',
+        target: 'calendar',
+      },
+      {
+        title: 'Day rhythm',
+        text: 'A calm schedule view helps the day feel organized without turning Remindly into a dense calendar app.',
+        target: 'rhythm',
       },
     ],
   },
@@ -109,33 +141,10 @@ const tutorialTabs = [
       },
     ],
   },
-  {
-    id: 'events',
-    label: 'Events',
-    title: 'See what belongs to time.',
-    text: 'Events are scheduled blocks with status, category, countdown, and reminder details alongside the rest of the day.',
-    explanations: [
-      {
-        title: 'Time-based items',
-        text: 'Events belong to a specific date, time, or recurring block.',
-        target: 'time',
-      },
-      {
-        title: 'Schedule context',
-        text: 'Status and countdown keep the day connected to time.',
-        target: 'schedule',
-      },
-      {
-        title: 'Event cards',
-        text: 'Open an event card when the schedule needs a closer look.',
-        target: 'cards',
-      },
-    ],
-  },
 ];
 
 const appSegments = [
-  { id: 'home', label: 'Tasks' },
+  { id: 'home', label: 'Home' },
   { id: 'reminders', label: 'Reminders' },
   { id: 'events', label: 'Events' },
   { id: 'habits', label: 'Habits' },
@@ -146,7 +155,7 @@ const bottomTabs = [
   { label: 'Home', icon: Home },
   { label: 'Calendar', icon: CalendarDays },
   { label: 'Add', icon: Plus },
-  { label: 'Stats', icon: Target },
+  { label: 'Stats', icon: BarChart3 },
   { label: 'Settings', icon: Settings },
 ];
 
@@ -159,18 +168,53 @@ const categoryCards = [
 
 const bottomCards = [
   {
-    title: 'Choose',
-    text: 'Move between the main app filters without losing the day context.',
+    title: 'Capture',
+    text: 'Start with the thought, then add structure only when it helps.',
   },
   {
-    title: 'Open',
-    text: 'Rows and cards are designed to open into focused edit or detail sheets.',
+    title: 'Schedule',
+    text: 'Calendar keeps timed items close to reminders and daily structure.',
   },
   {
-    title: 'Follow',
-    text: 'Return to the Home overview when you need the next useful action.',
+    title: 'Measure',
+    text: 'Stats should show progress without turning the app into a noisy dashboard.',
   },
 ];
+
+const deepDiveSections = [
+  {
+    kicker: 'Reminder detail',
+    title: 'Open a reminder without losing speed.',
+    text: 'Reminder setup stays flexible without becoming heavy. Category, priority, time, repeat rhythm, and alert style live close to the item.',
+  },
+  {
+    kicker: 'Notifications',
+    title: 'Useful reminders, not louder reminders.',
+    text: 'The goal is to help a reminder appear in the right context, not to create another notification wall.',
+  },
+  {
+    kicker: 'Calendar',
+    title: 'Time belongs next to the rest of the day.',
+    text: 'Calendar keeps scheduled events and time-based reminders visible by day, so they do not disappear into a plain task list.',
+  },
+  {
+    kicker: 'Stats',
+    title: 'Progress without turning into a dashboard.',
+    text: 'Stats can become a calm view of completion, habit consistency, reminders, and weekly rhythm.',
+  },
+];
+
+function selectedBottomTab(activeTabId) {
+  if (activeTabId === 'events') {
+    return 'Calendar';
+  }
+
+  if (activeTabId === 'habits') {
+    return 'Stats';
+  }
+
+  return 'Home';
+}
 
 function StatusPill({ children, tone = 'blue' }) {
   return <span className={`tutorial-app-pill tone-${tone}`}>{children}</span>;
@@ -348,19 +392,38 @@ function RemindersContent() {
         <ReminderRow title="Send weekly update" description="Share notes and blockers" time="11:30" />
       </section>
 
-      <p className="tutorial-outside-note">Open a reminder to review or edit details. Swipe actions stay part of the native app interaction model.</p>
+      <article className="tutorial-reminder-setup tutorial-highlight-setup tutorial-highlight-context">
+        <div className="tutorial-setup-topline">
+          <StatusPill><SlidersHorizontal size={10} strokeWidth={2.3} /> Quick setup</StatusPill>
+          <small>Preview</small>
+        </div>
+        <strong>Review project plan</strong>
+        <p>Reminder settings stay close to the item, so capture stays fast.</p>
+        <div className="tutorial-setting-grid">
+          <span><Clock3 size={11} strokeWidth={2.4} /> 9:15 today</span>
+          <span><Flag size={11} strokeWidth={2.4} /> High</span>
+          <span><Layers3 size={11} strokeWidth={2.4} /> Work</span>
+          <span><Repeat2 size={11} strokeWidth={2.4} /> Once</span>
+          <span><Bell size={11} strokeWidth={2.4} /> Alert</span>
+          <span><Sparkles size={11} strokeWidth={2.4} /> Future context</span>
+        </div>
+      </article>
     </>
   );
 }
 
 function HabitsContent() {
   return (
-    <section className="tutorial-habit-list tutorial-highlight-check tutorial-highlight-progress tutorial-highlight-clarity">
-      <SectionTitle title="Current Habits" count="4" tone="green" />
-      <HabitRow title="Drink water" meta="Goal: 4 · Done 3 times" icon="💧" progress={75} done />
-      <HabitRow title="Read 20 minutes" meta="Goal: 1 · Done 0 times" icon="📖" progress={18} />
-      <HabitRow title="Evening walk" meta="3 day streak" icon="🚶" progress={54} />
-    </section>
+    <>
+      <section className="tutorial-habit-list tutorial-highlight-check tutorial-highlight-progress tutorial-highlight-clarity">
+        <SectionTitle title="Current Habits" count="4" tone="green" />
+        <HabitRow title="Drink water" meta="Goal: 4 · Done 3 times" icon="💧" progress={75} done />
+        <HabitRow title="Read 20 minutes" meta="Goal: 1 · Done 0 times" icon="📖" progress={18} />
+        <HabitRow title="Evening walk" meta="3 day streak" icon="🚶" progress={54} />
+      </section>
+
+      <StatsConcept compact />
+    </>
   );
 }
 
@@ -390,12 +453,42 @@ function PlansContent() {
 
 function EventsContent() {
   return (
-    <section className="tutorial-event-list tutorial-highlight-time tutorial-highlight-schedule tutorial-highlight-cards">
+    <section className="tutorial-event-list tutorial-highlight-time tutorial-highlight-calendar tutorial-highlight-rhythm">
       <SectionTitle title="Live & Upcoming" count="2" tone="green" />
       <EventCard live />
       <SectionTitle title="All Events" count="4" tone="purple" />
       <EventCard />
     </section>
+  );
+}
+
+function StatsConcept({ compact = false }) {
+  return (
+    <article className={compact ? 'tutorial-stats-card is-compact' : 'tutorial-stats-card'}>
+      <div className="tutorial-stats-heading">
+        <StatusPill tone="green">
+          <BarChart3 size={10} strokeWidth={2.3} />
+          Stats concept
+        </StatusPill>
+        <small>calm progress</small>
+      </div>
+      <div className="tutorial-stats-body">
+        <div className="tutorial-stats-ring" style={{ '--progress': '74%' }}>
+          <span>74%</span>
+        </div>
+        <div className="tutorial-stats-copy">
+          <strong>Weekly rhythm</strong>
+          <p>Habits, reminders, and focus blocks become a quiet progress overview.</p>
+          <div className="tutorial-stats-bars" aria-hidden="true">
+            <i style={{ '--bar': '44%' }} />
+            <i style={{ '--bar': '70%' }} />
+            <i style={{ '--bar': '52%' }} />
+            <i style={{ '--bar': '86%' }} />
+            <i style={{ '--bar': '64%' }} />
+          </div>
+        </div>
+      </div>
+    </article>
   );
 }
 
@@ -443,8 +536,9 @@ function TutorialPhonePreview({ activeTab }) {
             <nav className="tutorial-app-tabbar" aria-label="App tabs">
               {bottomTabs.map((tab) => {
                 const Icon = tab.icon;
+                const isSelected = tab.label === selectedBottomTab(activeTab.id);
                 return (
-                  <span key={tab.label} className={tab.label === 'Home' ? 'is-selected' : ''}>
+                  <span key={tab.label} className={isSelected ? 'is-selected' : ''}>
                     <Icon size={tab.label === 'Add' ? 19 : 17} strokeWidth={2.35} />
                     <small>{tab.label}</small>
                   </span>
@@ -453,6 +547,16 @@ function TutorialPhonePreview({ activeTab }) {
             </nav>
           </div>
         </div>
+      </div>
+      <div className="tutorial-nav-hints" aria-hidden="true">
+        <span className={activeTab.id === 'events' ? 'is-visible' : ''}>
+          <CalendarDays size={12} strokeWidth={2.3} />
+          Calendar keeps scheduled items visible.
+        </span>
+        <span className={activeTab.id === 'habits' ? 'is-visible' : ''}>
+          <BarChart3 size={12} strokeWidth={2.3} />
+          Stats show progress without noise.
+        </span>
       </div>
     </div>
   );
@@ -483,56 +587,352 @@ function TutorialExplanations({ activeTab }) {
   );
 }
 
+function TutorialSectionIntro({ section }) {
+  return (
+    <div className="tutorial-deep-copy">
+      <div className="section-kicker">{section.kicker}</div>
+      <h2>{section.title}</h2>
+      <p>{section.text}</p>
+    </div>
+  );
+}
+
+function DetailOption({ icon: Icon, label, value, tone = 'blue' }) {
+  return (
+    <span className={`tutorial-detail-option tone-${tone}`}>
+      <Icon size={13} strokeWidth={2.35} />
+      <small>{label}</small>
+      <strong>{value}</strong>
+    </span>
+  );
+}
+
+function TutorialInsightCard({ icon: Icon, title, text }) {
+  return (
+    <article className="tutorial-insight-card">
+      <Icon size={17} strokeWidth={2.3} />
+      <strong>{title}</strong>
+      <p>{text}</p>
+    </article>
+  );
+}
+
+function ReminderDetailSection({ className = '' }) {
+  return (
+    <section className={`tutorial-deep-section tutorial-detail-section ${className}`} aria-label="Reminder detail tutorial">
+      <TutorialSectionIntro section={deepDiveSections[0]} />
+
+      <div className="tutorial-deep-layout">
+        <div className="tutorial-detail-visual">
+          <div className="tutorial-sheet-card">
+            <span className="tutorial-sheet-grabber" aria-hidden="true" />
+            <header>
+              <div>
+                <p>Edit Reminder</p>
+                <h3>Review project plan</h3>
+              </div>
+              <button type="button">Done</button>
+            </header>
+
+            <article className="tutorial-detail-preview">
+              <span><Pencil size={18} strokeWidth={2.4} /></span>
+              <div>
+                <strong>Review project plan</strong>
+                <p>Update title, details, and reminder settings.</p>
+              </div>
+            </article>
+
+            <label className="tutorial-field-preview">
+              <small>TITLE</small>
+              <strong>Review project plan</strong>
+            </label>
+
+            <label className="tutorial-field-preview">
+              <small>DETAILS</small>
+              <span>Confirm the next steps before lunch.</span>
+            </label>
+
+            <div className="tutorial-detail-grid">
+              <DetailOption icon={Clock3} label="Time" value="9:15" />
+              <DetailOption icon={Flag} label="Priority" value="High" tone="red" />
+              <DetailOption icon={Layers3} label="Category" value="Work" />
+              <DetailOption icon={Repeat2} label="Repeat" value="Daily" tone="green" />
+              <DetailOption icon={Bell} label="Alert" value="10 min" />
+              <DetailOption icon={Sparkles} label="Style" value="Focused" tone="purple" />
+            </div>
+          </div>
+        </div>
+
+        <div className="tutorial-deep-insights">
+          <TutorialInsightCard
+            icon={Pencil}
+            title="Open to refine"
+            text="A row can open into a focused sheet for title, details, and status."
+          />
+          <TutorialInsightCard
+            icon={SlidersHorizontal}
+            title="Structure stays close"
+            text="Category, priority, time, repeat rhythm, and alert style are near the item."
+          />
+          <TutorialInsightCard
+            icon={CheckCircle2}
+            title="Still fast to capture"
+            text="The reminder can start simple, then gain detail only when it needs it."
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function SmartNotificationsSection({ className = '' }) {
+  return (
+    <section className={`tutorial-deep-section tutorial-notification-section ${className}`} aria-label="Smart notification tutorial">
+      <TutorialSectionIntro section={deepDiveSections[1]} />
+
+      <div className="tutorial-message-layout">
+        <div className="tutorial-message-stack">
+          <article className="tutorial-message-card is-primary">
+            <span><Bell size={15} strokeWidth={2.4} /></span>
+            <div>
+              <strong>Review project plan</strong>
+              <p>Work context · 9:15 today</p>
+            </div>
+            <small>Useful now</small>
+          </article>
+
+          <article className="tutorial-message-card is-muted">
+            <span><ShieldCheck size={15} strokeWidth={2.4} /></span>
+            <div>
+              <strong>Personal task</strong>
+              <p>Not useful during focus time</p>
+            </div>
+            <small>Later</small>
+          </article>
+
+          <article className="tutorial-message-card is-context">
+            <span><MapPin size={15} strokeWidth={2.4} /></span>
+            <div>
+              <strong>Future context-aware categories</strong>
+              <p>Designed to grow toward work, personal, and situation-aware timing.</p>
+            </div>
+          </article>
+        </div>
+
+        <div className="tutorial-deep-insights">
+          <TutorialInsightCard
+            icon={MessageCircle}
+            title="Less notification noise"
+            text="Remindly should help decide what matters now, not send everything at once."
+          />
+          <TutorialInsightCard
+            icon={Layers3}
+            title="Categories can become smarter"
+            text="Future direction: categories can use context to make reminders more relevant."
+          />
+          <TutorialInsightCard
+            icon={ShieldCheck}
+            title="Careful by design"
+            text="Context should make reminders feel helpful and privacy-conscious, not invasive."
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CalendarDeepDiveSection({ className = '' }) {
+  const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+  return (
+    <section className={`tutorial-deep-section tutorial-calendar-section ${className}`} aria-label="Calendar tutorial">
+      <TutorialSectionIntro section={deepDiveSections[2]} />
+
+      <div className="tutorial-calendar-layout">
+        <div className="tutorial-calendar-card">
+          <header>
+            <div>
+              <p>June</p>
+              <h3>Today</h3>
+            </div>
+            <StatusPill><CalendarDays size={10} strokeWidth={2.3} /> Calendar</StatusPill>
+          </header>
+
+          <div className="tutorial-week-row">
+            {days.map((day, index) => (
+              <span key={`${day}-${index}`} className={index === 2 ? 'is-today' : ''}>
+                <small>{day}</small>
+                <strong>{17 + index}</strong>
+              </span>
+            ))}
+          </div>
+
+          <div className="tutorial-day-timeline">
+            <article>
+              <time>09:00</time>
+              <div>
+                <strong>Focus block</strong>
+                <p>Scheduled event · active now</p>
+              </div>
+            </article>
+            <article className="is-highlighted">
+              <time>11:30</time>
+              <div>
+                <strong>Send weekly update</strong>
+                <p>Reminder connected to the day</p>
+              </div>
+            </article>
+            <article>
+              <time>14:30</time>
+              <div>
+                <strong>Design review</strong>
+                <p>Upcoming event</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div className="tutorial-deep-insights">
+          <TutorialInsightCard
+            icon={CalendarDays}
+            title="Time-based overview"
+            text="Events and scheduled reminders become easier to understand by day."
+          />
+          <TutorialInsightCard
+            icon={Clock3}
+            title="Daily structure"
+            text="The timeline connects time with the rest of the daily workspace."
+          />
+          <TutorialInsightCard
+            icon={Target}
+            title="One place to return"
+            text="Calendar supports the Home view instead of replacing it."
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function StatsDeepDiveSection({ className = '' }) {
+  return (
+    <section className={`tutorial-deep-section tutorial-stats-section ${className}`} aria-label="Stats tutorial">
+      <TutorialSectionIntro section={deepDiveSections[3]} />
+
+      <div className="tutorial-stats-layout">
+        <div className="tutorial-analytics-card">
+          <header>
+            <div>
+              <p>Calm progress</p>
+              <h3>Weekly rhythm</h3>
+            </div>
+            <StatusPill tone="green"><TrendingUp size={10} strokeWidth={2.3} /> Concept</StatusPill>
+          </header>
+
+          <div className="tutorial-analytics-main">
+            <div className="tutorial-analytics-ring" style={{ '--progress': '78%' }}>
+              <span>78%</span>
+              <small>Today</small>
+            </div>
+            <div className="tutorial-line-chart" aria-hidden="true">
+              <svg viewBox="0 0 280 110" role="img">
+                <path className="chart-grid" d="M8 86 H272 M8 56 H272 M8 26 H272" />
+                <path className="chart-line" d="M10 80 C42 58 61 74 91 48 S145 24 172 42 S223 82 270 26" />
+              </svg>
+            </div>
+          </div>
+
+          <div className="tutorial-analytics-metrics">
+            <span><strong>12</strong><small>Completed reminders</small></span>
+            <span><strong>5 day</strong><small>Habit consistency</small></span>
+            <span><strong>4</strong><small>Focus blocks</small></span>
+          </div>
+        </div>
+
+        <div className="tutorial-deep-insights">
+          <TutorialInsightCard
+            icon={BarChart3}
+            title="Completion without pressure"
+            text="Stats should show momentum without making the product feel like a report."
+          />
+          <TutorialInsightCard
+            icon={CheckCircle2}
+            title="Habit consistency"
+            text="Progress can show what is already done and what rhythm is forming."
+          />
+          <TutorialInsightCard
+            icon={TrendingUp}
+            title="Designed to grow"
+            text="This is a website concept for where Remindly stats can become stronger."
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function TutorialView() {
+  const pageRef = useRef(null);
   const [activeTabId, setActiveTabId] = useState('home');
+  const activeSection = usePresentationSections(pageRef);
+  const presentationClass = (index) => getPresentationClass(index, activeSection);
   const activeTab = useMemo(
     () => tutorialTabs.find((tab) => tab.id === activeTabId) ?? tutorialTabs[0],
     [activeTabId]
   );
 
   return (
-    <div className="page-view tutorial-view" aria-label="Remindly tutorial">
-      <section className="tutorial-hero page-hero page-hero-wide" aria-labelledby="tutorial-page-title">
-        <div>
-          <div className="section-kicker">Tutorial</div>
-          <h1 id="tutorial-page-title">Learn Remindly by using it.</h1>
-          <p>
-            Switch between the main parts of the app and see how your day is organized.
-          </p>
-        </div>
-      </section>
+    <div ref={pageRef} className="page-view tutorial-view presentation-page" aria-label="Remindly tutorial">
+      <section className={`tutorial-primary-slide ${presentationClass(0)}`} aria-labelledby="tutorial-page-title">
+        <section className="tutorial-hero page-hero page-hero-wide">
+          <div>
+            <div className="section-kicker">Tutorial</div>
+            <h1 id="tutorial-page-title">Learn Remindly by using it.</h1>
+            <p>
+              Switch between the main parts of the app and see how your day is organized.
+            </p>
+          </div>
+        </section>
 
-      <section id="tutorial" className="tutorial-walkthrough" aria-label="Interactive Remindly tutorial">
-        <div className="tutorial-step-rail" role="tablist" aria-label="Tutorial tabs">
-          {tutorialTabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab.id === tab.id}
-              className={activeTab.id === tab.id ? 'is-active' : ''}
-              onClick={() => setActiveTabId(tab.id)}
-            >
-              {tab.label}
-            </button>
+        <section id="tutorial" className="tutorial-walkthrough" aria-label="Interactive Remindly tutorial">
+          <div className="tutorial-step-rail" role="tablist" aria-label="Tutorial tabs">
+            {tutorialTabs.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                aria-selected={activeTab.id === tab.id}
+                className={activeTab.id === tab.id ? 'is-active' : ''}
+                onClick={() => setActiveTabId(tab.id)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="tutorial-stage">
+            <TutorialPhonePreview activeTab={activeTab} />
+            <TutorialExplanations activeTab={activeTab} />
+          </div>
+        </section>
+
+        <section className="tutorial-bottom-cards" aria-label="Remindly tutorial summary">
+          {bottomCards.map((card) => (
+            <article key={card.title}>
+              <Layers3 size={18} strokeWidth={2.2} />
+              <h3>{card.title}</h3>
+              <p>{card.text}</p>
+            </article>
           ))}
-        </div>
-
-        <div className="tutorial-stage">
-          <TutorialPhonePreview activeTab={activeTab} />
-          <TutorialExplanations activeTab={activeTab} />
-        </div>
+        </section>
       </section>
 
-      <section className="tutorial-bottom-cards" aria-label="Remindly tutorial summary">
-        {bottomCards.map((card) => (
-          <article key={card.title}>
-            <Layers3 size={18} strokeWidth={2.2} />
-            <h3>{card.title}</h3>
-            <p>{card.text}</p>
-          </article>
-        ))}
-      </section>
+      <div className="tutorial-deep-dive" aria-label="Detailed Remindly tutorial">
+        <ReminderDetailSection className={presentationClass(1)} />
+        <SmartNotificationsSection className={presentationClass(2)} />
+        <CalendarDeepDiveSection className={presentationClass(3)} />
+        <StatsDeepDiveSection className={presentationClass(4)} />
+      </div>
     </div>
   );
 }

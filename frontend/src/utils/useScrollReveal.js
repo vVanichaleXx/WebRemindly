@@ -9,12 +9,18 @@ const revealSelector = [
   '.interface-copy',
   '.interface-board',
   '.interface-card',
+  '.roadmap-route-layer',
   '.roadmap-card',
-  '.roadmap-path-connector',
   '.roadmap-closing',
   '.tutorial-step-rail',
   '.tutorial-stage',
   '.tutorial-bottom-cards article',
+  '.tutorial-deep-copy',
+  '.tutorial-detail-visual',
+  '.tutorial-message-stack',
+  '.tutorial-calendar-card',
+  '.tutorial-analytics-card',
+  '.tutorial-insight-card',
   '.tutorial-card',
   '.pricing-card',
   '.article-card',
@@ -29,6 +35,7 @@ const staggerSelector = [
   '.article-card',
   '.roadmap-card',
   '.tutorial-bottom-cards article',
+  '.tutorial-insight-card',
   '.tutorial-card',
 ].join(', ');
 
@@ -42,6 +49,7 @@ export default function useScrollReveal(refreshKey) {
     }
 
     const revealTargets = [...root.querySelectorAll(revealSelector)];
+    const readyTimers = [];
 
     revealTargets.forEach((element) => {
       const parent = element.parentElement;
@@ -49,7 +57,7 @@ export default function useScrollReveal(refreshKey) {
       const groupIndex = Math.max(0, groupItems.indexOf(element));
 
       element.classList.add('reveal-on-scroll');
-      element.classList.remove('reveal-from-left', 'reveal-from-right', 'is-visible');
+      element.classList.remove('reveal-from-left', 'reveal-from-right', 'is-visible', 'is-ready');
       element.style.setProperty('--reveal-delay', `${Math.min(groupIndex * 120, 360)}ms`);
 
       if (element.matches('.section-heading-row, .interface-copy, .page-hero')) {
@@ -66,6 +74,16 @@ export default function useScrollReveal(refreshKey) {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('is-visible');
+
+            if (entry.target.matches('.feature-card')) {
+              const delay = Number.parseFloat(getComputedStyle(entry.target).getPropertyValue('--reveal-delay')) || 0;
+              const timer = window.setTimeout(() => {
+                entry.target.classList.add('is-ready');
+              }, delay + 1120);
+
+              readyTimers.push(timer);
+            }
+
             observer.unobserve(entry.target);
           }
         });
@@ -78,6 +96,9 @@ export default function useScrollReveal(refreshKey) {
 
     revealTargets.forEach((element) => observer.observe(element));
 
-    return () => observer.disconnect();
+    return () => {
+      readyTimers.forEach((timer) => window.clearTimeout(timer));
+      observer.disconnect();
+    };
   }, [refreshKey]);
 }
