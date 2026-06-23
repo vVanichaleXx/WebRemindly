@@ -44,11 +44,20 @@ export default function useScrollReveal(refreshKey) {
     const root = document.querySelector('.landing-home');
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    if (!root || prefersReducedMotion) {
+    if (!root) {
       return undefined;
     }
 
     const revealTargets = [...root.querySelectorAll(revealSelector)];
+
+    if (prefersReducedMotion) {
+      root.querySelectorAll('.feature-card, .article-card').forEach((element) => {
+        element.classList.add('is-ready');
+      });
+
+      return undefined;
+    }
+
     const readyTimers = [];
 
     revealTargets.forEach((element) => {
@@ -75,11 +84,12 @@ export default function useScrollReveal(refreshKey) {
           if (entry.isIntersecting) {
             entry.target.classList.add('is-visible');
 
-            if (entry.target.matches('.feature-card')) {
+            if (entry.target.matches('.feature-card, .article-card')) {
               const delay = Number.parseFloat(getComputedStyle(entry.target).getPropertyValue('--reveal-delay')) || 0;
+              const revealDuration = entry.target.matches('.article-card') ? 1320 : 1120;
               const timer = window.setTimeout(() => {
                 entry.target.classList.add('is-ready');
-              }, delay + 1120);
+              }, delay + revealDuration);
 
               readyTimers.push(timer);
             }
